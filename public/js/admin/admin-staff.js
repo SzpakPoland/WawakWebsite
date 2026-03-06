@@ -72,7 +72,8 @@ function showStaffModal(member) {
       </div>
       <div class="form-group">
         <label>Zdjęcie ${isEdit && member.photo_url ? '(zostaw puste żeby zachować obecne)' : ''}</label>
-        ${isEdit && member.photo_url ? `<img src="${escapeHtml(member.photo_url)}" alt="" style="width:60px;height:60px;border-radius:50%;object-fit:cover;margin-bottom:8px" />` : ''}
+        ${isEdit && member.photo_url ? `<img src="${escapeHtml(member.photo_url)}" alt="" style="width:60px;height:60px;border-radius:50%;object-fit:cover;margin-bottom:8px;display:block" />` : ''}
+        <input type="file" id="s-photo" class="form-control" accept="image/*" />
       </div>
       <div class="form-row">
         <div class="form-group">
