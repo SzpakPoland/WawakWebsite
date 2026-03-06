@@ -280,27 +280,28 @@ select.form-control { appearance: none; background-image: url("data:image/svg+xm
   box-shadow: var(--shadow); overflow: hidden;
   transition: transform var(--transition), box-shadow var(--transition);
   display: flex; flex-direction: column;
+  text-decoration: none; color: inherit;
+  border-top: 4px solid var(--card-color, var(--primary));
 }
-.announcement-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
-.announcement-header {
-  padding: 28px 28px 20px;
-  background: var(--card-color, var(--primary));
-  color: white; position: relative; overflow: hidden;
+.announcement-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.ann-card-img-wrap { position: relative; background: #f1f5f9; overflow: hidden; }
+.ann-card-img-wrap .announcement-image {
+  width: 100%; height: auto; max-height: 300px;
+  object-fit: contain; display: block;
 }
-.announcement-header::after {
-  content: '';
-  position: absolute; bottom: -20px; right: -20px;
-  width: 80px; height: 80px;
-  background: rgba(255,255,255,0.12); border-radius: 50%;
+.ann-card-no-img { height: 6px; background: var(--card-color, var(--primary)); }
+.ann-pinned-badge {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 0.72rem; font-weight: 700;
+  color: #fff; background: var(--secondary);
+  padding: 3px 10px; border-radius: 999px; white-space: nowrap;
 }
-.announcement-header h3 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.3; }
-.announcement-meta { font-size: 0.8rem; opacity: 0.85; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-.announcement-body { padding: 20px 28px 24px; flex: 1; }
-.announcement-body p { font-size: 0.92rem; color: var(--text-muted); line-height: 1.7; }
-.announcement-image {
-  width: 100%; max-height: 180px; object-fit: cover;
-}
-.announcement-footer { padding: 0 28px 20px; display: flex; gap: 10px; }
+.ann-card-body { padding: 20px 24px 22px; display: flex; flex-direction: column; flex: 1; }
+.ann-card-title { font-size: 1.1rem; font-weight: 700; color: var(--text); line-height: 1.35; margin-bottom: 8px; }
+.announcement-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.ann-card-excerpt { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; flex: 1; }
+.announcement-read-more { display: inline-block; margin-top: 14px; font-size: 0.85rem; font-weight: 600; color: var(--card-color, var(--primary)); }
+.announcement-card:hover .announcement-read-more { text-decoration: underline; }
 
 /* ==================== GALLERY ==================== */
 .gallery-grid {
@@ -653,13 +654,6 @@ tbody tr:hover { background: #f8fafc; }
   flex-wrap: wrap;
 }
 .form-control-sm { padding: 6px 10px; font-size: 0.82rem; max-width: 160px; }
-
-/* ==================== ANNOUNCEMENT DETAIL ==================== */
-.announcement-image-top { width: 100%; max-height: 360px; object-fit: cover; border-radius: var(--radius); margin-bottom: 32px; }
-.ann-pinned-badge { display: inline-block; font-size: 0.75rem; font-weight: 700; color: var(--secondary); background: var(--secondary-light); padding: 3px 10px; border-radius: 999px; margin-bottom: 6px; }
-.announcement-read-more { font-size: 0.85rem; font-weight: 600; color: var(--card-color, var(--primary)); margin-top: 14px; }
-.announcement-card:hover .announcement-read-more { text-decoration: underline; }
-.announcement-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
 
 /* ==================== ANNOUNCEMENT DETAIL ==================== */
 .ann-detail-header {

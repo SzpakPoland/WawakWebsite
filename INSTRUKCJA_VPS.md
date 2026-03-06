@@ -279,6 +279,12 @@ mkdir -p logs
 chmod 755 public/uploads
 chmod 755 data
 chmod 755 logs
+
+# WAŻNE: Nginx (www-data) musi móc odczytać pliki z katalogu domowego.
+# Bez tego CSS i JS nie załadują się (HTML ładuje się przez proxy, ale
+# pliki statyczne serwowane bezpośrednio przez Nginx będą blokowane).
+chmod o+x /home/wawaka
+chmod -R o+rX ~/sztab-wawaka/public/
 ```
 
 ### 9.1 Testowe uruchomienie
@@ -338,22 +344,9 @@ server {
     access_log /var/log/nginx/sztab-wawaka-access.log;
     error_log  /var/log/nginx/sztab-wawaka-error.log;
 
-    # Pliki statyczne (Nginx serwuje bezpośrednio — szybciej niż Node.js)
-    location /uploads/ {
-        alias /home/wawaka/sztab-wawaka/public/uploads/;
-        expires 7d;
-        add_header Cache-Control "public, immutable";
-        try_files $uri =404;
-    }
-
-    location ~* \.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
-        root /home/wawaka/sztab-wawaka/public;
-        expires 30d;
-        add_header Cache-Control "public, immutable";
-        try_files $uri =404;
-    }
-
-    # Reszta ruchu do Node.js
+    # Cały ruch do Node.js — express.static obsługuje pliki statyczne (CSS, JS, obrazy, uploady)
+    # To najprostsza i najniezawodniejsza konfiguracja: brak problemów z uprawnieniami
+    # (Node.js działa jako wawaka i ma pełny dostęp do swojego katalogu domowego)
     location / {
         proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
