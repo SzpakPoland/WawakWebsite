@@ -100,16 +100,16 @@ async function renderAdminDashboard(container) {
     </div>`;
 
   try {
-    const [announcements, staff, gallery, logs] = await Promise.all([
+    const [announcements, users, gallery, logs] = await Promise.all([
       API.getAllAnnouncements().catch(() => []),
-      API.getAllStaff().catch(() => []),
+      API.getUsers().catch(() => []),
       API.getGallery().catch(() => []),
       Auth.hasPermission('view_logs') ? API.getLogs({ limit: 5 }) : Promise.resolve({ logs: [] }),
     ]);
 
     document.getElementById('stats-grid').innerHTML = `
       <div class="stat-card"><div class="stat-icon purple">📢</div><div><div class="stat-number">${announcements.length}</div><div class="stat-label">Ogłoszeń</div></div></div>
-      <div class="stat-card"><div class="stat-icon pink">👥</div><div><div class="stat-number">${staff.length}</div><div class="stat-label">Członków sztabu</div></div></div>
+      <div class="stat-card"><div class="stat-icon pink">�</div><div><div class="stat-number">${users.length}</div><div class="stat-label">Użytkowników</div></div></div>
       <div class="stat-card"><div class="stat-icon green">🖼️</div><div><div class="stat-number">${gallery.length}</div><div class="stat-label">Zdjęć w galerii</div></div></div>
       <div class="stat-card"><div class="stat-icon yellow">📋</div><div><div class="stat-number">${logs.total || 0}</div><div class="stat-label">Wpisów w logach</div></div></div>`;
 
