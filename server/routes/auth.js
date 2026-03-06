@@ -56,13 +56,11 @@ router.post('/login', (req, res) => {
   });
 });
 
-// POST /api/auth/logout
 router.post('/logout', authenticateToken, (req, res) => {
   logAction(req.user.id, req.user.username, 'Wylogowano', 'auth', null, req.ip);
   res.json({ message: 'Wylogowano pomyślnie' });
 });
 
-// GET /api/auth/me
 router.get('/me', authenticateToken, (req, res) => {
   const db = getDb();
   const user = db.prepare(`
@@ -73,7 +71,6 @@ router.get('/me', authenticateToken, (req, res) => {
 
   if (!user) return res.status(404).json({ error: 'Użytkownik nie znaleziony' });
 
-  // Get permissions
   const permissions = db.prepare(`
     SELECT DISTINCT p.name FROM permissions p
     LEFT JOIN role_permissions rp ON rp.permission_id = p.id AND rp.role_id = ?
@@ -84,20 +81,17 @@ router.get('/me', authenticateToken, (req, res) => {
   res.json({ ...user, permissions });
 });
 
-// PUT /api/auth/profile — user edits their own profile
 router.put('/profile', authenticateToken, (req, res) => {
   const { display_name, username, current_password, new_password } = req.body;
   const db = getDb();
   const user = db.prepare(`SELECT * FROM users WHERE id = ?`).get(req.user.id);
   if (!user) return res.status(404).json({ error: 'Użytkownik nie znaleziony' });
 
-  // If changing username, check uniqueness
   if (username && username !== user.username) {
     const taken = db.prepare(`SELECT id FROM users WHERE username = ? AND id != ?`).get(username, user.id);
     if (taken) return res.status(409).json({ error: 'Ten login jest już zajęty' });
   }
 
-  // If changing password, require current password
   let newHash = user.password_hash;
   if (new_password) {
     if (!current_password) return res.status(400).json({ error: 'Podaj aktualne hasło aby je zmienić' });
@@ -116,13 +110,11 @@ router.put('/profile', authenticateToken, (req, res) => {
   res.json({ message: 'Profil zaktualizowany', user: updated });
 });
 
-// POST /api/auth/avatar — upload profile picture
 router.post('/avatar', authenticateToken, avatarUpload.single('avatar'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'Brak pliku' });
   const db = getDb();
   const user = db.prepare(`SELECT * FROM users WHERE id = ?`).get(req.user.id);
 
-  // Quota check
   const relativePath = `/uploads/avatars/${req.file.filename}`;
   const quotaResult  = checkAndRecordUpload(req.user.id, relativePath, req.file.size, req.user.username);
   if (!quotaResult.allowed) {

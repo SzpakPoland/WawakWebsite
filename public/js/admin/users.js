@@ -1,4 +1,4 @@
-/* =====================================================
+====================================================
    Admin: Users management
    ===================================================== */
 async function renderAdminUsers(container) {
@@ -20,7 +20,7 @@ async function loadUsersTable() {
     const [users, roles, quotaData] = await Promise.all([
       API.getUsers(),
       API.getRoles(),
-      API.getUploadLimits().catch(() => null), // only superadmin can fetch this
+      API.getUploadLimits().catch(() => null),
     ]);
 
     const quotaMap    = quotaData ? Object.fromEntries(quotaData.map(q => [q.id, q])) : {};

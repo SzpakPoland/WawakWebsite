@@ -34,11 +34,9 @@ router.get('/', (req, res) => {
   res.json(rows);
 });
 
-// POST /api/gallery (upload)
 router.post('/', authenticateToken, requirePermission('manage_gallery'), upload.single('image'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'Brak pliku' });
 
-  // Quota check
   const relativePath = `/uploads/gallery/${req.file.filename}`;
   const quotaResult  = checkAndRecordUpload(req.user.id, relativePath, req.file.size, req.user.username);
   if (!quotaResult.allowed) {

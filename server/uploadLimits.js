@@ -1,11 +1,10 @@
-/**
- * Upload quota management — limits stored in data/upload-limits.json
+* Upload quota management — limits stored in data/upload-limits.json
  * No database changes required.
  *
  * JSON structure:
  * {
- *   "limits": { "<userId>": <bytes> },   // explicit per-user limits
- *   "usage":  { "<userId>": <bytes> },   // cumulative bytes uploaded
+ *   "limits": { "<userId>": <bytes> },
+ *   "usage":  { "<userId>": <bytes> },
  *   "files":  { "<relativePath>": { "userId": <id>, "size": <bytes> } }
  * }
  *
@@ -18,12 +17,8 @@ const fs   = require('fs');
 const path = require('path');
 
 const LIMITS_FILE          = path.join(__dirname, '..', 'data', 'upload-limits.json');
-const DEFAULT_LIMIT_BYTES  = 100 * 1024 * 1024;   // 100 MB
-const SUPERADMIN_DEFAULT_BYTES = 500 * 1024 * 1024; // 500 MB
-
-// ---------------------------------------------------------------------------
-// Internal helpers
-// ---------------------------------------------------------------------------
+const DEFAULT_LIMIT_BYTES  = 100 * 1024 * 1024;
+const SUPERADMIN_DEFAULT_BYTES = 500 * 1024 * 1024;
 
 function getLimitsData() {
   if (!fs.existsSync(LIMITS_FILE)) return { limits: {}, usage: {}, files: {} };
@@ -38,11 +33,6 @@ function saveLimitsData(data) {
   fs.writeFileSync(LIMITS_FILE, JSON.stringify(data, null, 2), 'utf8');
 }
 
-// ---------------------------------------------------------------------------
-// Public API
-// ---------------------------------------------------------------------------
-
-/**
  * Returns the quota limit in bytes for a given user.
  * Falls back to SUPERADMIN_DEFAULT for username === 'superadmin',
  * or DEFAULT_LIMIT for everyone else.
@@ -55,20 +45,19 @@ function getUserLimit(userId, username) {
   return DEFAULT_LIMIT_BYTES;
 }
 
-/** Returns current cumulative upload usage in bytes for a user. */
+Returns current cumulative upload usage in bytes for a user. */
 function getUserUsage(userId) {
   const data = getLimitsData();
   return data.usage[String(userId)] || 0;
 }
 
-/** Sets an explicit quota limit (bytes) for a user. */
+Sets an explicit quota limit (bytes) for a user. */
 function setUserLimit(userId, limitBytes) {
   const data = getLimitsData();
   data.limits[String(userId)] = limitBytes;
   saveLimitsData(data);
 }
 
-/**
  * Records a newly uploaded file and updates usage.
  *
  * @param {number|string} userId
@@ -90,7 +79,6 @@ function checkAndRecordUpload(userId, relativePath, fileSize, username) {
     return { allowed: false, limit, usage, remaining };
   }
 
-  // Commit the record
   data.usage[key]          = usage + fileSize;
   data.files[relativePath] = { userId: Number(userId), size: fileSize };
   saveLimitsData(data);
@@ -98,7 +86,6 @@ function checkAndRecordUpload(userId, relativePath, fileSize, username) {
   return { allowed: true, limit, usage: data.usage[key], remaining: remaining - fileSize };
 }
 
-/**
  * Releases quota occupied by a file that is being deleted.
  * Looks up owner and size from the JSON "files" map.
  *
@@ -107,7 +94,7 @@ function checkAndRecordUpload(userId, relativePath, fileSize, username) {
 function recordDelete(relativePath) {
   const data     = getLimitsData();
   const fileInfo = data.files[relativePath];
-  if (!fileInfo) return;               // unknown file — no quota change
+  if (!fileInfo) return;
 
   const key = String(fileInfo.userId);
   data.usage[key] = Math.max(0, (data.usage[key] || 0) - fileInfo.size);
@@ -115,7 +102,7 @@ function recordDelete(relativePath) {
   saveLimitsData(data);
 }
 
-/** Human-readable size string. */
+Human-readable size string. */
 function formatBytes(bytes) {
   if (bytes >= 1024 * 1024 * 1024) return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
   if (bytes >= 1024 * 1024)        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';

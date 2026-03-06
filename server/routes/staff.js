@@ -30,19 +30,16 @@ router.get('/', (req, res) => {
   res.json(rows);
 });
 
-// GET /api/staff/all (admin)
 router.get('/all', authenticateToken, requirePermission('manage_staff'), (req, res) => {
   const db = getDb();
   const rows = db.prepare(`SELECT * FROM staff_members ORDER BY sort_order ASC, name ASC`).all();
   res.json(rows);
 });
 
-// POST /api/staff
 router.post('/', authenticateToken, requirePermission('manage_staff'), upload.single('photo'), (req, res) => {
   const { name, role_title, description, sort_order } = req.body;
   if (!name) return res.status(400).json({ error: 'Imię i nazwisko jest wymagane' });
 
-  // Quota check for photo
   if (req.file) {
     const relativePath = `/uploads/staff/${req.file.filename}`;
     const quotaResult  = checkAndRecordUpload(req.user.id, relativePath, req.file.size, req.user.username);

@@ -3,7 +3,6 @@ const router = express.Router();
 const { getDb } = require('../database');
 const { authenticateToken, requirePermission } = require('../middleware/auth');
 
-// GET /api/logs
 router.get('/', authenticateToken, requirePermission('view_logs'), (req, res) => {
   const db = getDb();
   const { category, limit = 100, offset = 0 } = req.query;

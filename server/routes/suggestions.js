@@ -3,7 +3,6 @@ const router = express.Router();
 const { getDb } = require('../database');
 const { authenticateToken, requirePermission, logAction } = require('../middleware/auth');
 
-// POST /api/suggestions — public, anyone can submit
 router.post('/', (req, res) => {
   const { content, category, is_anonymous, author_name, author_contact } = req.body;
   if (!content || !content.trim()) return res.status(400).json({ error: 'Treść sugestii jest wymagana' });
@@ -23,7 +22,6 @@ router.post('/', (req, res) => {
   res.status(201).json({ id: result.lastInsertRowid, message: 'Sugestia wysłana — dziękujemy!' });
 });
 
-// GET /api/suggestions — admin only
 router.get('/', authenticateToken, requirePermission('view_suggestions'), (req, res) => {
   const db = getDb();
   const { status, category, page = 1, limit = 25 } = req.query;

@@ -5,7 +5,6 @@ const { getDb } = require('../database');
 const { authenticateToken, requirePermission, logAction } = require('../middleware/auth');
 const { getLimitsData, getUserLimit, getUserUsage, setUserLimit, formatBytes, DEFAULT_LIMIT_BYTES, SUPERADMIN_DEFAULT_BYTES } = require('../uploadLimits');
 
-// GET /api/users
 router.get('/', authenticateToken, requirePermission('manage_users'), (req, res) => {
   const db = getDb();
   const users = db.prepare(`
@@ -16,7 +15,6 @@ router.get('/', authenticateToken, requirePermission('manage_users'), (req, res)
   res.json(users);
 });
 
-// POST /api/users
 router.post('/', authenticateToken, requirePermission('manage_users'), (req, res) => {
   const { username, display_name, password, role_id } = req.body;
   if (!username || !display_name || !password) return res.status(400).json({ error: 'Wypełnij wszystkie wymagane pola' });
@@ -33,14 +31,12 @@ router.post('/', authenticateToken, requirePermission('manage_users'), (req, res
   res.status(201).json({ id: result.lastInsertRowid, message: 'Użytkownik utworzony' });
 });
 
-// PUT /api/users/:id
 router.put('/:id', authenticateToken, requirePermission('manage_users'), (req, res) => {
   const { display_name, role_id, is_active, password } = req.body;
   const db = getDb();
   const user = db.prepare(`SELECT * FROM users WHERE id = ?`).get(req.params.id);
   if (!user) return res.status(404).json({ error: 'Użytkownik nie znaleziony' });
 
-  // Prevent demoting the only superadmin
   if (user.username === 'superadmin' && role_id) {
     const superRole = db.prepare(`SELECT id FROM roles WHERE name = 'superadmin'`).get();
     if (superRole && role_id != superRole.id) {
@@ -62,7 +58,6 @@ router.put('/:id', authenticateToken, requirePermission('manage_users'), (req, r
   res.json({ message: 'Użytkownik zaktualizowany' });
 });
 
-// DELETE /api/users/:id
 router.delete('/:id', authenticateToken, requirePermission('manage_users'), (req, res) => {
   const db = getDb();
   const user = db.prepare(`SELECT * FROM users WHERE id = ?`).get(req.params.id);
@@ -75,7 +70,6 @@ router.delete('/:id', authenticateToken, requirePermission('manage_users'), (req
   res.json({ message: 'Użytkownik usunięty' });
 });
 
-// GET /api/users/:id/permissions
 router.get('/:id/permissions', authenticateToken, requirePermission('manage_permissions'), (req, res) => {
   const db = getDb();
   const perms = db.prepare(`
@@ -86,9 +80,8 @@ router.get('/:id/permissions', authenticateToken, requirePermission('manage_perm
   res.json(perms);
 });
 
-// PUT /api/users/:id/permissions
 router.put('/:id/permissions', authenticateToken, requirePermission('manage_permissions'), (req, res) => {
-  const { permissions } = req.body; // [{permission_id, granted}]
+  const { permissions } = req.body;
   const db = getDb();
   const setUserPerm = db.prepare(`INSERT OR REPLACE INTO user_permissions (user_id, permission_id, granted) VALUES (?, ?, ?)`);
   const deleteUserPerm = db.prepare(`DELETE FROM user_permissions WHERE user_id = ? AND permission_id = ?`);
@@ -104,14 +97,12 @@ router.put('/:id/permissions', authenticateToken, requirePermission('manage_perm
   res.json({ message: 'Uprawnienia zaktualizowane' });
 });
 
-// GET /api/users/roles
 router.get('/roles/list', authenticateToken, (req, res) => {
   const db = getDb();
   const roles = db.prepare(`SELECT * FROM roles ORDER BY name`).all();
   res.json(roles);
 });
 
-// GET /api/users/roles/:id/permissions
 router.get('/roles/:id/permissions', authenticateToken, requirePermission('manage_permissions'), (req, res) => {
   const db = getDb();
   const perms = db.prepare(`
@@ -123,7 +114,6 @@ router.get('/roles/:id/permissions', authenticateToken, requirePermission('manag
   res.json(perms);
 });
 
-// PUT /api/users/roles/:id/permissions
 router.put('/roles/:id/permissions', authenticateToken, requirePermission('manage_permissions'), (req, res) => {
   const { permissions } = req.body;
   const db = getDb();
@@ -139,7 +129,6 @@ router.put('/roles/:id/permissions', authenticateToken, requirePermission('manag
   res.json({ message: 'Uprawnienia roli zaktualizowane' });
 });
 
-// POST /api/users/roles
 router.post('/roles', authenticateToken, requirePermission('manage_roles'), (req, res) => {
   const { name, description } = req.body;
   if (!name) return res.status(400).json({ error: 'Podaj nazwę roli' });
@@ -149,7 +138,6 @@ router.post('/roles', authenticateToken, requirePermission('manage_roles'), (req
   res.status(201).json({ id: result.lastInsertRowid, message: 'Rola utworzona' });
 });
 
-// DELETE /api/users/roles/:id
 router.delete('/roles/:id', authenticateToken, requirePermission('manage_roles'), (req, res) => {
   const db = getDb();
   const role = db.prepare(`SELECT * FROM roles WHERE id = ?`).get(req.params.id);
@@ -160,18 +148,12 @@ router.delete('/roles/:id', authenticateToken, requirePermission('manage_roles')
   res.json({ message: 'Rola usunięta' });
 });
 
-// GET /api/users/permissions/all
 router.get('/permissions/all', authenticateToken, requirePermission('manage_permissions'), (req, res) => {
   const db = getDb();
   const perms = db.prepare(`SELECT * FROM permissions ORDER BY category, name`).all();
   res.json(perms);
 });
 
-// ---------------------------------------------------------------------------
-// Upload quota management (superadmin only)
-// ---------------------------------------------------------------------------
-
-// GET /api/users/upload-limits — all users with their limits & usage
 router.get('/upload-limits', authenticateToken, (req, res) => {
   const db = getDb();
   const roleRow = db.prepare(`SELECT name FROM roles WHERE id = ?`).get(req.user.role_id);
@@ -197,13 +179,11 @@ router.get('/upload-limits', authenticateToken, (req, res) => {
   res.json(result);
 });
 
-// GET /api/users/:id/upload-limit — single user's quota info
 router.get('/:id/upload-limit', authenticateToken, (req, res) => {
   const db = getDb();
   const roleRow = db.prepare(`SELECT name FROM roles WHERE id = ?`).get(req.user.role_id);
   const isSuperAdmin = roleRow && roleRow.name === 'superadmin';
 
-  // Users can only query their own limit; superadmin can query everyone's
   if (!isSuperAdmin && req.user.id != req.params.id) {
     return res.status(403).json({ error: 'Brak uprawnień' });
   }
@@ -218,7 +198,6 @@ router.get('/:id/upload-limit', authenticateToken, (req, res) => {
   });
 });
 
-// PUT /api/users/:id/upload-limit — set limit (superadmin only)
 router.put('/:id/upload-limit', authenticateToken, (req, res) => {
   const db = getDb();
   const roleRow = db.prepare(`SELECT name FROM roles WHERE id = ?`).get(req.user.role_id);

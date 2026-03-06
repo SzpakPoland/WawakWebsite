@@ -1,4 +1,3 @@
-// Wczytaj zmienne środowiskowe z pliku .env (jeśli istnieje)
 require('dotenv').config();
 
 const express = require('express');
@@ -11,16 +10,14 @@ const PORT = process.env.PORT || 3000;
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 async function startServer() {
-  // Initialize database (async with sql.js WASM)
+
   await initializeDatabase();
   console.log('✅ Database initialized');
 
-  // Zaufaj nagłówkom proxy od Nginx (potrzebne do poprawnego req.ip)
   if (IS_PRODUCTION) {
     app.set('trust proxy', 1);
   }
 
-  // Nagłówki bezpieczeństwa
   app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
@@ -29,15 +26,12 @@ async function startServer() {
     next();
   });
 
-  // Middleware
   app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  // Static files
   app.use(express.static(path.join(__dirname, '..', 'public')));
 
-  // API Routes
   app.use('/api/auth', require('./routes/auth'));
   app.use('/api/users', require('./routes/users'));
   app.use('/api/announcements', require('./routes/announcements'));
@@ -46,13 +40,11 @@ async function startServer() {
   app.use('/api/logs', require('./routes/logs'));
   app.use('/api/suggestions', require('./routes/suggestions'));
 
-  // Error handler
   app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: err.message || 'Błąd serwera' });
   });
 
-  // Serve SPA for all non-API routes
   app.get('*', (req, res) => {
     if (!req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
       res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));

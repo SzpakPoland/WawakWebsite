@@ -35,11 +35,9 @@ function requirePermission(permissionName) {
     if (!req.user) return res.status(401).json({ error: 'Nieautoryzowany' });
     const db = getDb();
 
-    // Check if superadmin role
     const roleRow = db.prepare(`SELECT name FROM roles WHERE id = ?`).get(req.user.role_id);
     if (roleRow && roleRow.name === 'superadmin') return next();
 
-    // Check role permissions
     const rolePerm = db.prepare(`
       SELECT rp.permission_id FROM role_permissions rp
       JOIN permissions p ON p.id = rp.permission_id
@@ -48,7 +46,6 @@ function requirePermission(permissionName) {
 
     if (rolePerm) return next();
 
-    // Check individual user permissions
     const userPerm = db.prepare(`
       SELECT up.granted FROM user_permissions up
       JOIN permissions p ON p.id = up.permission_id

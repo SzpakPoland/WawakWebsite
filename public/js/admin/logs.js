@@ -1,4 +1,4 @@
-/* =====================================================
+====================================================
    Admin: System Logs
    ===================================================== */
 let _logsPage = 0;
@@ -21,7 +21,6 @@ async function renderAdminLogs(container) {
     <div id="logs-table-wrap"><div class="spinner"></div></div>
     <div id="logs-pagination" class="pagination mt-3"></div>`;
 
-  // Load categories
   try {
     const cats = await API.getLogCategories();
     const sel = document.getElementById('log-category-filter');

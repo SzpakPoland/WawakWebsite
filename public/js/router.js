@@ -1,4 +1,4 @@
-/* =====================================================
+====================================================
    SPA Router
    ===================================================== */
 const Router = (() => {
@@ -27,7 +27,6 @@ const Router = (() => {
     const content = document.getElementById('page-content');
     const navLinks = document.querySelectorAll('.nav-link');
 
-    // Update active nav
     navLinks.forEach(link => {
       const linkPage = link.dataset.page;
       const active = (path === '/' && linkPage === 'home') || (path === `/${linkPage}`);
