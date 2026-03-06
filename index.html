@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sztab Wawaka</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- Toast notifications -->
+  <div id="toast-container"></div>
+
+  <!-- Loading overlay -->
+  <div id="loading-overlay" class="hidden">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- App Shell -->
+  <div id="app">
+
+    <!-- NAVBAR -->
+    <nav id="navbar" class="navbar">
+      <div class="nav-inner">
+        <a href="#/" class="nav-logo">
+          <img src="/images/logo/logo.png" alt="Logo Sztabu Wawaka" class="site-logo" />
+          <span>Sztab <strong>Wawaka</strong></span>
+        </a>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="#/" class="nav-link" data-page="home">Strona główna</a></li>
+          <li><a href="#/announcements" class="nav-link" data-page="announcements">Ogłoszenia</a></li>
+          <li><a href="#/gallery" class="nav-link" data-page="gallery">Galeria</a></li>
+          <li><a href="#/staff" class="nav-link" data-page="staff">Sztab</a></li>
+          <li><a href="#/suggestions" class="nav-link" data-page="suggestions">Sugestie</a></li>
+          <li id="nav-admin-link" class="hidden"><a href="#/admin" class="nav-link nav-admin" data-page="admin">Panel Admina</a></li>
+        </ul>
+        <div class="nav-auth" id="nav-auth">
+          <button class="btn btn-outline-white" id="btn-login">Zaloguj</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- PAGE CONTENT -->
+    <main id="page-content"></main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-inner">
+          <div class="footer-brand">
+            <img src="/images/logo/logo.png" alt="Logo Sztabu Wawaka" class="site-logo" />
+            <strong>Sztab Wawaka</strong>
+          </div>
+          <p class="footer-tagline">Razem zmieniamy szkołę na lepsze!</p>
+          <p class="footer-copy">&copy;2026 Mikołaj Hamerski. Wszelkie prawa zastrzeżone.</p>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- MODALS -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div id="modal-box" class="modal-box">
+      <button class="modal-close" id="modal-close">&times;</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox hidden">
+    <button class="lightbox-close" id="lightbox-close">&times;</button>
+    <button class="lightbox-prev" id="lightbox-prev">&#8592;</button>
+    <div class="lightbox-img-wrap">
+      <img id="lightbox-img" src="" alt="" />
+      <p id="lightbox-caption"></p>
+    </div>
+    <button class="lightbox-next" id="lightbox-next">&#8594;</button>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/pages/shared.js"></script>
+  <script src="/js/pages/home.js"></script>
+  <script src="/js/pages/announcements.js"></script>
+  <script src="/js/pages/gallery.js"></script>
+  <script src="/js/pages/staff.js"></script>
+  <script src="/js/pages/login.js"></script>
+  <script src="/js/pages/suggestions.js"></script>
+  <script src="/js/admin/dashboard.js"></script>
+  <script src="/js/admin/users.js"></script>
+  <script src="/js/admin/permissions.js"></script>
+  <script src="/js/admin/logs.js"></script>
+  <script src="/js/admin/admin-announcements.js"></script>
+  <script src="/js/admin/admin-gallery.js"></script>
+  <script src="/js/admin/admin-staff.js"></script>
+  <script src="/js/admin/admin-suggestions.js"></script>
+  <script src="/js/router.js"></script>
+</body>
+</html>

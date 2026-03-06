@@ -1,0 +1,116 @@
+/* =====================================================
+   SPA Router
+   ===================================================== */
+const Router = (() => {
+
+  const routes = {
+    '/':              (c) => renderHome(c),
+    '/announcements': (c, params) => params[0] ? renderAnnouncementDetail(c, params[0]) : renderAnnouncements(c),
+    '/gallery':       (c) => renderGallery(c),
+    '/staff':         (c) => renderStaff(c),
+    '/suggestions':   (c) => renderSuggestions(c),
+    '/login':         (c) => renderLogin(c),
+    '/admin':         (c, params) => renderAdminPanel(c, params[0] || 'dashboard'),
+  };
+
+  function parseHash() {
+    const hash = window.location.hash.slice(1) || '/';
+    const parts = hash.split('/').filter(Boolean);
+    if (!parts.length) return { path: '/', params: [] };
+    const path = '/' + parts[0];
+    const params = parts.slice(1);
+    return { path, params };
+  }
+
+  async function render() {
+    const { path, params } = parseHash();
+    const content = document.getElementById('page-content');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    // Update active nav
+    navLinks.forEach(link => {
+      const linkPage = link.dataset.page;
+      const active = (path === '/' && linkPage === 'home') || (path === `/${linkPage}`);
+      link.classList.toggle('active', active);
+    });
+
+    const handler = routes[path];
+    if (!handler) {
+      content.innerHTML = `
+        <div class="section">
+          <div class="container">
+            <div class="empty-state">
+              <span class="emoji">🔍</span>
+              <h3>Strona nie znaleziona</h3>
+              <p>Nie ma takiej strony. Sprawdź adres URL.</p>
+              <a href="#/" class="btn btn-primary mt-2">← Wróć na start</a>
+            </div>
+          </div>
+        </div>`;
+      return;
+    }
+
+    showLoading(true);
+    try {
+      content.innerHTML = '';
+      await handler(content, params);
+    } catch (e) {
+      console.error('Route render error:', e);
+      content.innerHTML = `
+        <div class="section"><div class="container">
+          <div class="empty-state">
+            <span class="emoji">❌</span>
+            <h3>Błąd ładowania strony</h3>
+            <p>${escapeHtml(e.message)}</p>
+          </div>
+        </div></div>`;
+    } finally {
+      showLoading(false);
+      window.scrollTo(0, 0);
+    }
+  }
+
+  function navigate(path) {
+    window.location.hash = '#' + path;
+  }
+
+  function init() {
+    window.addEventListener('hashchange', render);
+    // Handle clicks on hash links
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[href^="#/"]');
+      if (link) {
+        e.preventDefault();
+        window.location.hash = link.getAttribute('href');
+      }
+    });
+    render();
+  }
+
+  return { navigate, init, render };
+})();
+
+// Modal global close
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-overlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// Hamburger
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('nav-links').classList.toggle('open');
+});
+document.addEventListener('click', (e) => {
+  const nav = document.getElementById('nav-links');
+  const ham = document.getElementById('hamburger');
+  if (!nav.contains(e.target) && !ham.contains(e.target)) nav.classList.remove('open');
+});
+
+// Boot
+(async () => {
+  await Auth.init();
+  Router.init();
+})();
