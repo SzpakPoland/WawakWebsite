@@ -1,18 +1,3 @@
-* Upload quota management — limits stored in data/upload-limits.json
- * No database changes required.
- *
- * JSON structure:
- * {
- *   "limits": { "<userId>": <bytes> },
- *   "usage":  { "<userId>": <bytes> },
- *   "files":  { "<relativePath>": { "userId": <id>, "size": <bytes> } }
- * }
- *
- * Default limits (when no explicit entry exists):
- *   superadmin user → SUPERADMIN_DEFAULT (500 MB)
- *   all other users → DEFAULT_LIMIT (100 MB)
- */
-
 const fs   = require('fs');
 const path = require('path');
 
