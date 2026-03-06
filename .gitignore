@@ -1,0 +1,33 @@
+# Zależności Node.js
+node_modules/
+
+# Środowisko
+.env
+
+# Baza danych (zawiera dane użytkowników)
+data/*.db
+data/*.db-shm
+data/*.db-wal
+
+# Przesłane pliki (zarządzane osobno na serwerze)
+public/uploads/avatars/*
+public/uploads/announcements/*
+public/uploads/gallery/*
+public/uploads/staff/*
+
+# Zachowaj puste foldery
+!public/uploads/avatars/.gitkeep
+!public/uploads/announcements/.gitkeep
+!public/uploads/gallery/.gitkeep
+!public/uploads/staff/.gitkeep
+!data/.gitkeep
+
+# Logi
+logs/*
+!logs/.gitkeep
+*.log
+npm-debug.log*
+
+# System
+.DS_Store
+Thumbs.db
