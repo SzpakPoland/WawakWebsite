@@ -10,9 +10,9 @@ const Router = (() => {
     '/admin':         (c, params) => renderAdminPanel(c, params[0] || 'dashboard'),
   };
 
-  function parseHash() {
-    const hash = window.location.hash.slice(1) || '/';
-    const parts = hash.split('/').filter(Boolean);
+  function parsePath() {
+    const pathname = window.location.pathname || '/';
+    const parts = pathname.split('/').filter(Boolean);
     if (!parts.length) return { path: '/', params: [] };
     const path = '/' + parts[0];
     const params = parts.slice(1);
@@ -20,7 +20,7 @@ const Router = (() => {
   }
 
   async function render() {
-    const { path, params } = parseHash();
+    const { path, params } = parsePath();
     const content = document.getElementById('page-content');
     const navLinks = document.querySelectorAll('.nav-link');
 
@@ -39,7 +39,7 @@ const Router = (() => {
               <span class="emoji">🔍</span>
               <h3>Strona nie znaleziona</h3>
               <p>Nie ma takiej strony. Sprawdź adres URL.</p>
-              <a href="#/" class="btn btn-primary mt-2">← Wróć na start</a>
+              <a href="/" class="btn btn-primary mt-2">← Wróć na start</a>
             </div>
           </div>
         </div>`;
@@ -67,17 +67,17 @@ const Router = (() => {
   }
 
   function navigate(path) {
-    window.location.hash = '#' + path;
+    history.pushState({}, '', path);
+    render();
   }
 
   function init() {
-    window.addEventListener('hashchange', render);
-    // Handle clicks on hash links
+    window.addEventListener('popstate', render);
     document.addEventListener('click', (e) => {
-      const link = e.target.closest('a[href^="#/"]');
-      if (link) {
+      const link = e.target.closest('a[href^="/"]');
+      if (link && !link.getAttribute('href').startsWith('//') && link.getAttribute('target') !== '_blank') {
         e.preventDefault();
-        window.location.hash = link.getAttribute('href');
+        navigate(link.getAttribute('href'));
       }
     });
     render();

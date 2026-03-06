@@ -9,8 +9,8 @@ async function renderHome(container) {
             <h1>Głosuj na<br/><span class="highlight">Wawaka!</span></h1>
             <p>Razem zmieniamy naszą szkołę na lepsze. Więcej głosu dla uczniów, lepsza przestrzeń, ciekawsze eventy.</p>
             <div class="hero-btns">
-              <a href="#/announcements" class="btn btn-lg btn-white">📢 Ogłoszenia</a>
-              <a href="#/staff" class="btn btn-lg btn-ghost-white">👥 Poznaj Sztab</a>
+              <a href="/announcements" class="btn btn-lg btn-white">📢 Ogłoszenia</a>
+              <a href="/staff" class="btn btn-lg btn-ghost-white">👥 Poznaj Sztab</a>
             </div>
           </div>
           <div class="hero-visual">
@@ -52,7 +52,7 @@ async function renderHome(container) {
             <h2>Najnowsze ogłoszenia</h2>
             <p>Bądź na bieżąco z aktualnościami kampanii</p>
           </div>
-          <a href="#/announcements" class="btn btn-outline">Wszystkie ogłoszenia →</a>
+          <a href="/announcements" class="btn btn-outline">Wszystkie ogłoszenia →</a>
         </div>
         <div id="home-announcements">
           <div class="empty-state"><div class="spinner" style="margin:0 auto"></div></div>
@@ -68,7 +68,7 @@ async function renderHome(container) {
             <h2>Nasz Sztab</h2>
             <p>Poznaj ludzi, którzy stoją za kampanią</p>
           </div>
-          <a href="#/staff" class="btn btn-outline">Cały zespół →</a>
+          <a href="/staff" class="btn btn-outline">Cały zespół →</a>
         </div>
         <div id="home-staff">
           <div class="empty-state"><div class="spinner" style="margin:0 auto"></div></div>

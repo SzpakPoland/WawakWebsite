@@ -27,7 +27,7 @@ function renderLogin(container) {
           <button type="submit" class="btn btn-primary btn-block btn-lg" id="login-btn">Zaloguj się</button>
         </form>
         <p style="text-align:center;margin-top:20px;font-size:0.85rem">
-          <a href="#/" style="color:var(--primary)">← Wróć na stronę główną</a>
+          <a href="/" style="color:var(--primary)">← Wróć na stronę główną</a>
         </p>
       </div>
     </div>`;

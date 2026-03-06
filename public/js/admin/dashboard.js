@@ -16,7 +16,7 @@ let _adminSection = 'dashboard';
 
 function renderAdminPanel(container, section = 'dashboard') {
   if (!Auth.isAdmin()) {
-    container.innerHTML = `<div class="section"><div class="container"><div class="empty-state"><span class="emoji">🔒</span><h3>Brak dostępu</h3><p>Musisz być zalogowany jako admin.</p><a href="#/login" class="btn btn-primary mt-2">Zaloguj się</a></div></div></div>`;
+    container.innerHTML = `<div class="section"><div class="container"><div class="empty-state"><span class="emoji">🔒</span><h3>Brak dostępu</h3><p>Musisz być zalogowany jako admin.</p><a href="/login" class="btn btn-primary mt-2">Zaloguj się</a></div></div></div>`;
     return;
   }
   _adminSection = section;

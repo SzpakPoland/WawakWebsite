@@ -42,8 +42,6 @@ async function renderAnnouncements(container) {
   }
 }
 
-/* =====================================================
-   Announcement detail page
 async function renderAnnouncementDetail(container, id) {
   container.innerHTML = `<div class="section"><div class="container"><div class="spinner" style="margin:60px auto"></div></div></div>`;
   try {
@@ -66,7 +64,7 @@ async function renderAnnouncementDetail(container, id) {
     container.innerHTML = `
       <div class="ann-detail-header" ${bgStyle}>
         <div class="container">
-          <a href="#/announcements" class="ann-back-btn">← Wszystkie ogłoszenia</a>
+          <a href="/announcements" class="ann-back-btn">← Wszystkie ogłoszenia</a>
           <h1>${escapeHtml(a.title)}</h1>
           <div class="ann-detail-meta">
             <span>📅 ${formatDate(a.created_at)}</span>
@@ -83,7 +81,7 @@ async function renderAnnouncementDetail(container, id) {
           <div class="ann-detail-body">${escapeHtml(a.content).replace(/\n/g, '<br/>')}</div>
           ${isSplit ? '</div></div>' : ''}
           <div style="margin-top:40px;padding-top:24px;border-top:1px solid var(--border)">
-            <a href="#/announcements" class="btn btn-outline">← Wróć do ogłoszeń</a>
+            <a href="/announcements" class="btn btn-outline">← Wróć do ogłoszeń</a>
           </div>
         </div>
       </div>`;
@@ -94,7 +92,7 @@ async function renderAnnouncementDetail(container, id) {
           <span class="emoji">🔍</span>
           <h3>Nie znaleziono ogłoszenia</h3>
           <p>Ogłoszenie mogło zostać usunięte lub link jest nieprawidłowy.</p>
-          <a href="#/announcements" class="btn btn-primary mt-2">← Wróć do ogłoszeń</a>
+          <a href="/announcements" class="btn btn-primary mt-2">← Wróć do ogłoszeń</a>
         </div>
       </div></div>`;
   }

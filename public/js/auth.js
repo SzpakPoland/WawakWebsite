@@ -89,7 +89,6 @@ const Auth = (() => {
         ${renderAvatar(_user)}
         <label class="profile-avatar-edit" title="Zmień zdjęcie profilowe">
           📷
-          <input type="file" id="profile-avatar-input" accept="image/*" style="display:none" />
         </label>
       </div>
       <p style="text-align:center;font-size:0.8rem;color:var(--text-muted);margin-bottom:24px">Kliknij ikonę aparatu, aby zmienić zdjęcie</p>
@@ -150,7 +149,6 @@ const Auth = (() => {
           _user.avatar_url = res.avatar_url;
           document.getElementById('profile-avatar-area').innerHTML =
             renderAvatar(_user) +
-            `<label class="profile-avatar-edit" title="Zmień zdjęcie profilowe">📷<input type="file" id="profile-avatar-input" accept="image/*" style="display:none" /></label>`;
           bindAvatarInput();
           updateNavbar();
           showToast('Zdjęcie profilowe zaktualizowane', 'success');

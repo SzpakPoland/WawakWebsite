@@ -53,7 +53,6 @@ function showUploadModal() {
     <form id="upload-form" enctype="multipart/form-data">
       <div class="form-group">
         <label>Plik graficzny</label>
-        <input type="file" id="photo-file" class="form-control" accept="image/*" required />
         <div class="form-hint">Formaty: JPG, PNG, GIF, WebP</div>
       </div>
       <div class="form-group">

@@ -3,7 +3,7 @@ function renderAnnouncementCard(a) {
     ? escapeHtml(a.excerpt)
     : (escapeHtml(a.content).slice(0, 160) + (a.content.length > 160 ? '…' : ''));
   return `
-    <a class="announcement-card" href="#/announcements/${a.id}" style="--card-color:${escapeHtml(a.color || '#1D4ED8')}">
+    <a class="announcement-card" href="/announcements/${a.id}" style="--card-color:${escapeHtml(a.color || '#1D4ED8')}">
       ${a.image_url
         ? `<div class="ann-card-img-wrap">
             <img class="announcement-image" src="${escapeHtml(a.image_url)}" alt="${escapeHtml(a.image_alt || a.title)}" loading="lazy" />
