@@ -114,7 +114,11 @@ const Auth = (() => {
 
         <div class="form-group">
           <label>Aktualne hasło</label>
-          <input class="form-control" type="password" id="pf-current-pass" placeholder="••••••••" autocomplete="current-password" />
+          <div style="position:relative">
+            <input class="form-control" type="password" id="pf-current-pass" placeholder="••••••••" autocomplete="off" style="padding-right:2.6rem" />
+            <button type="button" id="pf-toggle-pass" title="Pokaż/ukryj hasło"
+              style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;color:var(--text-muted);padding:0;line-height:1">👁</button>
+          </div>
         </div>
         <div class="form-row">
           <div class="form-group">
@@ -159,6 +163,14 @@ const Auth = (() => {
       });
     }
     bindAvatarInput();
+
+    // Show/hide current-password toggle
+    document.getElementById('pf-toggle-pass').addEventListener('click', () => {
+      const inp = document.getElementById('pf-current-pass');
+      const btn = document.getElementById('pf-toggle-pass');
+      if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+      else { inp.type = 'password'; btn.textContent = '👁'; }
+    });
 
     document.getElementById('pf-save-btn').addEventListener('click', async () => {
       const display_name = document.getElementById('pf-display-name').value.trim();
