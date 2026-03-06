@@ -6,6 +6,7 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const { getDb } = require('../database');
 const { authenticateToken, requirePermission, logAction } = require('../middleware/auth');
+const { checkAndRecordUpload, recordDelete, formatBytes } = require('../uploadLimits');
 
 const uploadDir = path.join(__dirname, '..', '..', 'public', 'uploads', 'staff');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
@@ -17,7 +18,7 @@ const storage = multer.diskStorage({
     cb(null, `staff-${uuidv4()}${ext}`);
   }
 });
-const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 }, fileFilter: (req, file, cb) => {
+const upload = multer({ storage, fileFilter: (req, file, cb) => {
   if (!file.mimetype.startsWith('image/')) return cb(new Error('Tylko obrazy'));
   cb(null, true);
 }});
@@ -41,6 +42,18 @@ router.post('/', authenticateToken, requirePermission('manage_staff'), upload.si
   const { name, role_title, description, sort_order } = req.body;
   if (!name) return res.status(400).json({ error: 'Imię i nazwisko jest wymagane' });
 
+  // Quota check for photo
+  if (req.file) {
+    const relativePath = `/uploads/staff/${req.file.filename}`;
+    const quotaResult  = checkAndRecordUpload(req.user.id, relativePath, req.file.size, req.user.username);
+    if (!quotaResult.allowed) {
+      fs.unlinkSync(req.file.path);
+      return res.status(413).json({
+        error: `Przekroczono limit miejsca na pliki. Dostępne: ${formatBytes(quotaResult.remaining)}, wymagane: ${formatBytes(req.file.size)}`
+      });
+    }
+  }
+
   const db = getDb();
   const photo_url = req.file ? `/uploads/staff/${req.file.filename}` : null;
   const maxOrder = db.prepare(`SELECT MAX(sort_order) as mo FROM staff_members`).get();
@@ -60,11 +73,23 @@ router.put('/:id', authenticateToken, requirePermission('manage_staff'), upload.
 
   let photo_url = member.photo_url;
   if (req.file) {
+    // Quota check before accepting new photo
+    const relativePath = `/uploads/staff/${req.file.filename}`;
+    const quotaResult  = checkAndRecordUpload(req.user.id, relativePath, req.file.size, req.user.username);
+    if (!quotaResult.allowed) {
+      fs.unlinkSync(req.file.path);
+      return res.status(413).json({
+        error: `Przekroczono limit miejsca na pliki. Dostępne: ${formatBytes(quotaResult.remaining)}, wymagane: ${formatBytes(req.file.size)}`
+      });
+    }
+
+    // Remove old photo
     if (member.photo_url) {
       const old = path.join(__dirname, '..', '..', 'public', member.photo_url);
       if (fs.existsSync(old)) fs.unlinkSync(old);
+      recordDelete(member.photo_url);
     }
-    photo_url = `/uploads/staff/${req.file.filename}`;
+    photo_url = relativePath;
   }
 
   db.prepare(`UPDATE staff_members SET name=?, role_title=?, description=?, photo_url=?, sort_order=?, is_active=?, updated_at=CURRENT_TIMESTAMP WHERE id=?`)
@@ -86,6 +111,7 @@ router.delete('/:id', authenticateToken, requirePermission('manage_staff'), (req
   if (member.photo_url) {
     const fp = path.join(__dirname, '..', '..', 'public', member.photo_url);
     if (fs.existsSync(fp)) fs.unlinkSync(fp);
+    recordDelete(member.photo_url);
   }
   db.prepare(`DELETE FROM staff_members WHERE id = ?`).run(req.params.id);
   logAction(req.user.id, req.user.username, 'Usunięto członka sztabu', 'staff', { name: member.name }, req.ip);

@@ -59,6 +59,11 @@ const API = {
   updateStaffMember: (id, formData) => apiFetch(`/staff/${id}`, { method: 'PUT', body: formData, headers: {} }),
   deleteStaffMember: (id) => apiFetch(`/staff/${id}`, { method: 'DELETE' }),
 
+  // Upload quotas (superadmin only)
+  getUploadLimits: () => apiFetch('/users/upload-limits'),
+  getUserUploadLimit: (id) => apiFetch(`/users/${id}/upload-limit`),
+  setUserUploadLimit: (id, limitMb) => apiFetch(`/users/${id}/upload-limit`, { method: 'PUT', body: JSON.stringify({ limit_mb: limitMb }) }),
+
   // Logs
   getLogs: (params = {}) => {
     const q = new URLSearchParams(params).toString();

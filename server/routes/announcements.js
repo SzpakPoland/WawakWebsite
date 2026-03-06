@@ -6,6 +6,7 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const { getDb } = require('../database');
 const { authenticateToken, optionalAuth, requirePermission, logAction } = require('../middleware/auth');
+const { checkAndRecordUpload, recordDelete, formatBytes } = require('../uploadLimits');
 
 const imgDir = path.join(__dirname, '..', '..', 'public', 'uploads', 'announcements');
 if (!fs.existsSync(imgDir)) fs.mkdirSync(imgDir, { recursive: true });
@@ -15,7 +16,6 @@ const upload = multer({
     destination: (req, file, cb) => cb(null, imgDir),
     filename: (req, file, cb) => cb(null, `ann-${uuidv4()}${path.extname(file.originalname)}`)
   }),
-  limits: { fileSize: 8 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (!file.mimetype.startsWith('image/')) return cb(new Error('Tylko obrazy'));
     cb(null, true);
@@ -25,7 +25,17 @@ const upload = multer({
 // POST /api/announcements/upload-image
 router.post('/upload-image', authenticateToken, requirePermission('edit_announcements'), upload.single('image'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'Brak pliku' });
-  res.json({ image_url: `/uploads/announcements/${req.file.filename}` });
+
+  const relativePath = `/uploads/announcements/${req.file.filename}`;
+  const quotaResult  = checkAndRecordUpload(req.user.id, relativePath, req.file.size, req.user.username);
+  if (!quotaResult.allowed) {
+    fs.unlinkSync(req.file.path);
+    return res.status(413).json({
+      error: `Przekroczono limit miejsca na pliki. Dostępne: ${formatBytes(quotaResult.remaining)}, wymagane: ${formatBytes(req.file.size)}`
+    });
+  }
+
+  res.json({ image_url: relativePath });
 });
 
 // DELETE old announcement image
@@ -34,6 +44,7 @@ router.delete('/image', authenticateToken, requirePermission('edit_announcements
   if (file_path && file_path.startsWith('/uploads/announcements/')) {
     const full = path.join(__dirname, '..', '..', 'public', file_path);
     if (fs.existsSync(full)) fs.unlinkSync(full);
+    recordDelete(file_path);
   }
   res.json({ ok: true });
 });

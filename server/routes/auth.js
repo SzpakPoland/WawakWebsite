@@ -7,6 +7,7 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const { getDb } = require('../database');
 const { generateToken, authenticateToken, logAction } = require('../middleware/auth');
+const { checkAndRecordUpload, recordDelete, formatBytes } = require('../uploadLimits');
 
 const avatarDir = path.join(__dirname, '..', '..', 'public', 'uploads', 'avatars');
 if (!fs.existsSync(avatarDir)) fs.mkdirSync(avatarDir, { recursive: true });
@@ -16,7 +17,6 @@ const avatarUpload = multer({
     destination: (req, file, cb) => cb(null, avatarDir),
     filename: (req, file, cb) => cb(null, `avatar-${uuidv4()}${path.extname(file.originalname)}`)
   }),
-  limits: { fileSize: 3 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (!file.mimetype.startsWith('image/')) return cb(new Error('Tylko obrazy'));
     cb(null, true);
@@ -122,13 +122,24 @@ router.post('/avatar', authenticateToken, avatarUpload.single('avatar'), (req, r
   const db = getDb();
   const user = db.prepare(`SELECT * FROM users WHERE id = ?`).get(req.user.id);
 
+  // Quota check
+  const relativePath = `/uploads/avatars/${req.file.filename}`;
+  const quotaResult  = checkAndRecordUpload(req.user.id, relativePath, req.file.size, req.user.username);
+  if (!quotaResult.allowed) {
+    fs.unlinkSync(req.file.path);
+    return res.status(413).json({
+      error: `Przekroczono limit miejsca na pliki. Dostępne: ${formatBytes(quotaResult.remaining)}, wymagane: ${formatBytes(req.file.size)}`
+    });
+  }
+
   // Remove old avatar file if it's in uploads/avatars
   if (user.avatar_url && user.avatar_url.startsWith('/uploads/avatars/')) {
     const oldPath = path.join(__dirname, '..', '..', 'public', user.avatar_url);
     if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    recordDelete(user.avatar_url);
   }
 
-  const avatarUrl = `/uploads/avatars/${req.file.filename}`;
+  const avatarUrl = relativePath;
   db.prepare(`UPDATE users SET avatar_url=?, updated_at=CURRENT_TIMESTAMP WHERE id=?`).run(avatarUrl, user.id);
   logAction(user.id, user.username, 'Zmieniono zdjęcie profilowe', 'auth', null, req.ip);
   res.json({ avatar_url: avatarUrl });

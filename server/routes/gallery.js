@@ -6,6 +6,7 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const { getDb } = require('../database');
 const { authenticateToken, requirePermission, logAction } = require('../middleware/auth');
+const { checkAndRecordUpload, recordDelete, formatBytes } = require('../uploadLimits');
 
 const uploadDir = path.join(__dirname, '..', '..', 'public', 'uploads', 'gallery');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
@@ -20,7 +21,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (!file.mimetype.startsWith('image/')) return cb(new Error('Tylko pliki graficzne'), false);
     cb(null, true);
@@ -37,6 +37,17 @@ router.get('/', (req, res) => {
 // POST /api/gallery (upload)
 router.post('/', authenticateToken, requirePermission('manage_gallery'), upload.single('image'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'Brak pliku' });
+
+  // Quota check
+  const relativePath = `/uploads/gallery/${req.file.filename}`;
+  const quotaResult  = checkAndRecordUpload(req.user.id, relativePath, req.file.size, req.user.username);
+  if (!quotaResult.allowed) {
+    fs.unlinkSync(req.file.path);
+    return res.status(413).json({
+      error: `Przekroczono limit miejsca na pliki. Dostępne: ${formatBytes(quotaResult.remaining)}, wymagane: ${formatBytes(req.file.size)}`
+    });
+  }
+
   const db = getDb();
   const maxOrder = db.prepare(`SELECT MAX(sort_order) as mo FROM gallery`).get();
   const description = req.body.description || '';
@@ -70,6 +81,7 @@ router.delete('/:id', authenticateToken, requirePermission('manage_gallery'), (r
 
   const filePath = path.join(uploadDir, item.filename);
   if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+  recordDelete(`/uploads/gallery/${item.filename}`);
 
   db.prepare(`DELETE FROM gallery WHERE id = ?`).run(req.params.id);
   logAction(req.user.id, req.user.username, 'Usunięto zdjęcie z galerii', 'gallery', { filename: item.original_name }, req.ip);

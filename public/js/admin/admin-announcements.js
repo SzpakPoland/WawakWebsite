@@ -113,7 +113,7 @@ function showAnnouncementModal(ann) {
           <span style="color:var(--text-muted);font-size:0.82rem">lub</span>
           <input type="text" id="ann-image-url" class="form-control" style="flex:1;min-width:180px" value="${isEdit && ann.image_url && !ann.image_url.startsWith('/uploads/') ? escapeHtml(ann.image_url) : ''}" placeholder="Wklej URL obrazka..." />
         </div>
-        <p class="form-hint">Maks. 8 MB · JPG, PNG, GIF, WebP</p>
+        <p class="form-hint">JPG, PNG, GIF, WebP</p>
       </div>
       <div class="form-row">
         <div class="form-group">

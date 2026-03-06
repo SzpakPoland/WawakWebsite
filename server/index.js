@@ -49,7 +49,6 @@ async function startServer() {
   // Error handler
   app.use((err, req, res, next) => {
     console.error(err.stack);
-    if (err.code === 'LIMIT_FILE_SIZE') return res.status(400).json({ error: 'Plik jest za duży (max 10MB)' });
     res.status(500).json({ error: err.message || 'Błąd serwera' });
   });
 

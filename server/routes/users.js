@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const { getDb } = require('../database');
 const { authenticateToken, requirePermission, logAction } = require('../middleware/auth');
+const { getLimitsData, getUserLimit, getUserUsage, setUserLimit, formatBytes, DEFAULT_LIMIT_BYTES, SUPERADMIN_DEFAULT_BYTES } = require('../uploadLimits');
 
 // GET /api/users
 router.get('/', authenticateToken, requirePermission('manage_users'), (req, res) => {
@@ -164,6 +165,82 @@ router.get('/permissions/all', authenticateToken, requirePermission('manage_perm
   const db = getDb();
   const perms = db.prepare(`SELECT * FROM permissions ORDER BY category, name`).all();
   res.json(perms);
+});
+
+// ---------------------------------------------------------------------------
+// Upload quota management (superadmin only)
+// ---------------------------------------------------------------------------
+
+// GET /api/users/upload-limits — all users with their limits & usage
+router.get('/upload-limits', authenticateToken, (req, res) => {
+  const db = getDb();
+  const roleRow = db.prepare(`SELECT name FROM roles WHERE id = ?`).get(req.user.role_id);
+  if (!roleRow || roleRow.name !== 'superadmin') {
+    return res.status(403).json({ error: 'Tylko superadmin może zarządzać limitami plików' });
+  }
+
+  const users = db.prepare(`
+    SELECT u.id, u.username, u.display_name, r.name as role_name
+    FROM users u LEFT JOIN roles r ON r.id = u.role_id
+    ORDER BY u.display_name
+  `).all();
+
+  const result = users.map(u => ({
+    id:           u.id,
+    username:     u.username,
+    display_name: u.display_name,
+    role_name:    u.role_name,
+    limit_bytes:  getUserLimit(u.id, u.username),
+    usage_bytes:  getUserUsage(u.id),
+  }));
+
+  res.json(result);
+});
+
+// GET /api/users/:id/upload-limit — single user's quota info
+router.get('/:id/upload-limit', authenticateToken, (req, res) => {
+  const db = getDb();
+  const roleRow = db.prepare(`SELECT name FROM roles WHERE id = ?`).get(req.user.role_id);
+  const isSuperAdmin = roleRow && roleRow.name === 'superadmin';
+
+  // Users can only query their own limit; superadmin can query everyone's
+  if (!isSuperAdmin && req.user.id != req.params.id) {
+    return res.status(403).json({ error: 'Brak uprawnień' });
+  }
+
+  const user = db.prepare(`SELECT id, username FROM users WHERE id = ?`).get(req.params.id);
+  if (!user) return res.status(404).json({ error: 'Użytkownik nie znaleziony' });
+
+  res.json({
+    userId:      user.id,
+    limit_bytes: getUserLimit(user.id, user.username),
+    usage_bytes: getUserUsage(user.id),
+  });
+});
+
+// PUT /api/users/:id/upload-limit — set limit (superadmin only)
+router.put('/:id/upload-limit', authenticateToken, (req, res) => {
+  const db = getDb();
+  const roleRow = db.prepare(`SELECT name FROM roles WHERE id = ?`).get(req.user.role_id);
+  if (!roleRow || roleRow.name !== 'superadmin') {
+    return res.status(403).json({ error: 'Tylko superadmin może zmieniać limity plików' });
+  }
+
+  const limitMb = parseFloat(req.body.limit_mb);
+  if (isNaN(limitMb) || limitMb < 0) {
+    return res.status(400).json({ error: 'Podaj prawidłową wartość limitu w MB (liczba >= 0)' });
+  }
+
+  const user = db.prepare(`SELECT id, username FROM users WHERE id = ?`).get(req.params.id);
+  if (!user) return res.status(404).json({ error: 'Użytkownik nie znaleziony' });
+
+  const limitBytes = Math.round(limitMb * 1024 * 1024);
+  setUserLimit(user.id, limitBytes);
+
+  logAction(req.user.id, req.user.username, 'Zmieniono limit plików użytkownika', 'users',
+    { target_user: user.username, limit_mb: limitMb }, req.ip);
+
+  res.json({ message: 'Limit zaktualizowany', limit_bytes: limitBytes });
 });
 
 module.exports = router;
