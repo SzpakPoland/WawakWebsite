@@ -1,6 +1,3 @@
-====================================================
-   Announcements public page
-   ===================================================== */
 async function renderAnnouncements(container) {
   container.innerHTML = `
     <div class="page-header">
@@ -47,7 +44,6 @@ async function renderAnnouncements(container) {
 
 /* =====================================================
    Announcement detail page
-   ===================================================== */
 async function renderAnnouncementDetail(container, id) {
   container.innerHTML = `<div class="section"><div class="container"><div class="spinner" style="margin:60px auto"></div></div></div>`;
   try {

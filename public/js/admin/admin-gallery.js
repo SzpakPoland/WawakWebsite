@@ -1,6 +1,3 @@
-====================================================
-   Admin: Gallery management
-   ===================================================== */
 async function renderAdminGallery(container) {
   container.innerHTML = `
     <div class="admin-page-title">

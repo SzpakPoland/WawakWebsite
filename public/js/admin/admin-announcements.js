@@ -1,6 +1,3 @@
-====================================================
-   Admin: Announcements management
-   ===================================================== */
 const COLORS = ['#1D4ED8','#DC2626','#16a34a','#ca8a04','#0891b2','#ea580c','#7c3aed','#0f766e','#db2777','#9333ea','#0369a1','#b45309'];
 
 async function renderAdminAnnouncements(container) {

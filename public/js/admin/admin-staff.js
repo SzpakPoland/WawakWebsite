@@ -1,6 +1,3 @@
-====================================================
-   Admin: Staff management
-   ===================================================== */
 async function renderAdminStaff(container) {
   container.innerHTML = `
     <div class="admin-page-title">

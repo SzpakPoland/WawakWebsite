@@ -1,6 +1,3 @@
-====================================================
-   Admin: Skrzynka Sugestii
-   ===================================================== */
 const STATUS_CONFIG = {
   'nowe':        { label: 'Nowe',         badge: 'badge-danger',  icon: '🆕' },
   'przeczytane': { label: 'Przeczytane',  badge: 'badge-warning', icon: '👁️' },

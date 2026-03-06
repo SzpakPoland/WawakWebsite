@@ -1,6 +1,3 @@
-====================================================
-   Home page
-   ===================================================== */
 async function renderHome(container) {
   container.innerHTML = `
     <!-- HERO -->

@@ -1,7 +1,3 @@
-====================================================
-   Admin Panel Shell & Dashboard
-   ===================================================== */
-
 function getAdminSidebarItems() {
   const items = [
     { id: 'dashboard',    icon: '📊', label: 'Dashboard',        perm: null },

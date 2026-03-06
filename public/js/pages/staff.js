@@ -1,6 +1,3 @@
-====================================================
-   Staff public page
-   ===================================================== */
 async function renderStaff(container) {
   container.innerHTML = `
     <div class="page-header">

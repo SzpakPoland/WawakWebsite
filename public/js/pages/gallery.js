@@ -1,6 +1,3 @@
-====================================================
-   Gallery public page
-   ===================================================== */
 let _galleryItems = [];
 
 async function renderGallery(container) {

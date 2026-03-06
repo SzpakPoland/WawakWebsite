@@ -1,6 +1,3 @@
-====================================================
-   Admin: Permissions management
-   ===================================================== */
 async function renderAdminPermissions(container) {
   container.innerHTML = `
     <div class="admin-page-title">

@@ -1,6 +1,3 @@
-====================================================
-   Shared render helpers (used by multiple pages)
-   ===================================================== */
 function renderAnnouncementCard(a) {
   const excerpt = a.excerpt
     ? escapeHtml(a.excerpt)

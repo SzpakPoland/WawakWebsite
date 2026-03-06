@@ -18,10 +18,6 @@ function saveLimitsData(data) {
   fs.writeFileSync(LIMITS_FILE, JSON.stringify(data, null, 2), 'utf8');
 }
 
- * Returns the quota limit in bytes for a given user.
- * Falls back to SUPERADMIN_DEFAULT for username === 'superadmin',
- * or DEFAULT_LIMIT for everyone else.
- */
 function getUserLimit(userId, username) {
   const data = getLimitsData();
   const key  = String(userId);
@@ -30,27 +26,17 @@ function getUserLimit(userId, username) {
   return DEFAULT_LIMIT_BYTES;
 }
 
-Returns current cumulative upload usage in bytes for a user. */
 function getUserUsage(userId) {
   const data = getLimitsData();
   return data.usage[String(userId)] || 0;
 }
 
-Sets an explicit quota limit (bytes) for a user. */
 function setUserLimit(userId, limitBytes) {
   const data = getLimitsData();
   data.limits[String(userId)] = limitBytes;
   saveLimitsData(data);
 }
 
- * Records a newly uploaded file and updates usage.
- *
- * @param {number|string} userId
- * @param {string}        relativePath  e.g. "/uploads/gallery/gallery-uuid.jpg"
- * @param {number}        fileSize      bytes
- * @returns {{ allowed: boolean, limit: number, usage: number, remaining: number }}
- *          Result BEFORE the upload is counted. If !allowed, caller must delete the file.
- */
 function checkAndRecordUpload(userId, relativePath, fileSize, username) {
   const data      = getLimitsData();
   const key       = String(userId);
@@ -71,11 +57,6 @@ function checkAndRecordUpload(userId, relativePath, fileSize, username) {
   return { allowed: true, limit, usage: data.usage[key], remaining: remaining - fileSize };
 }
 
- * Releases quota occupied by a file that is being deleted.
- * Looks up owner and size from the JSON "files" map.
- *
- * @param {string} relativePath  e.g. "/uploads/gallery/gallery-uuid.jpg"
- */
 function recordDelete(relativePath) {
   const data     = getLimitsData();
   const fileInfo = data.files[relativePath];
@@ -87,7 +68,6 @@ function recordDelete(relativePath) {
   saveLimitsData(data);
 }
 
-Human-readable size string. */
 function formatBytes(bytes) {
   if (bytes >= 1024 * 1024 * 1024) return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
   if (bytes >= 1024 * 1024)        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';

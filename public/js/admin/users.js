@@ -1,6 +1,3 @@
-====================================================
-   Admin: Users management
-   ===================================================== */
 async function renderAdminUsers(container) {
   container.innerHTML = `
     <div class="admin-page-title">
@@ -89,7 +86,6 @@ function getRoleBadge(role) {
   return map[role] || 'muted';
 }
 
-/** Human-readable byte size (used for quota display). */
 function fmtBytes(bytes) {
   if (bytes >= 1073741824) return (bytes / 1073741824).toFixed(1) + ' GB';
   if (bytes >= 1048576)    return (bytes / 1048576).toFixed(1) + ' MB';

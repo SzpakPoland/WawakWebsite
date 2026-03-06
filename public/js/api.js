@@ -1,6 +1,3 @@
-====================================================
-   API helper — all fetch calls to the backend
-   ===================================================== */
 const API_BASE = '/api';
 
 async function apiFetch(path, options = {}) {

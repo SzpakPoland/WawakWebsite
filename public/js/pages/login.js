@@ -1,6 +1,3 @@
-====================================================
-   Login page
-   ===================================================== */
 function renderLogin(container) {
   if (Auth.isLoggedIn()) { Router.navigate('/'); return; }
   container.innerHTML = `

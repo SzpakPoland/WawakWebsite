@@ -1,7 +1,3 @@
-====================================================
-   Public: Skrzynka Sugestii
-   ===================================================== */
-
 async function renderSuggestions(container) {
   container.innerHTML = `
     <div class="page-header">
