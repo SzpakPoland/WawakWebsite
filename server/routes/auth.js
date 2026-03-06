@@ -112,7 +112,7 @@ router.put('/profile', authenticateToken, (req, res) => {
 
   logAction(user.id, user.username, 'Edytowano profil', 'auth', { fields: Object.keys(req.body) }, req.ip);
 
-  const updated = db.prepare(`SELECT id, username, display_name, role_id, avatar_url, r.name as role_name FROM users u LEFT JOIN roles r ON r.id = u.role_id WHERE u.id = ?`).get(user.id);
+  const updated = db.prepare(`SELECT u.id, u.username, u.display_name, u.role_id, u.avatar_url, r.name as role_name FROM users u LEFT JOIN roles r ON r.id = u.role_id WHERE u.id = ?`).get(user.id);
   res.json({ message: 'Profil zaktualizowany', user: updated });
 });
 
