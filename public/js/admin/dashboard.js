@@ -109,7 +109,7 @@ async function renderAdminDashboard(container) {
 
     document.getElementById('stats-grid').innerHTML = `
       <div class="stat-card"><div class="stat-icon purple">📢</div><div><div class="stat-number">${announcements.length}</div><div class="stat-label">Ogłoszeń</div></div></div>
-      <div class="stat-card"><div class="stat-icon pink">�</div><div><div class="stat-number">${users.length}</div><div class="stat-label">Użytkowników</div></div></div>
+      <div class="stat-card"><div class="stat-icon pink">👥</div><div><div class="stat-number">${users.length}</div><div class="stat-label">Użytkowników</div></div></div>
       <div class="stat-card"><div class="stat-icon green">🖼️</div><div><div class="stat-number">${gallery.length}</div><div class="stat-label">Zdjęć w galerii</div></div></div>
       <div class="stat-card"><div class="stat-icon yellow">📋</div><div><div class="stat-number">${logs.total || 0}</div><div class="stat-label">Wpisów w logach</div></div></div>`;
 
