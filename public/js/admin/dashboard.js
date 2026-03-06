@@ -31,7 +31,7 @@ function renderAdminPanel(container, section = 'dashboard') {
       <nav class="admin-sidebar" id="admin-sidebar">
         <div class="admin-sidebar-logo">
           <div class="logo" style="display:flex;align-items:center;gap:10px">
-            <img src="/images/logo/logo.svg" alt="Logo" class="site-logo site-logo--sm" />
+            <img src="/images/logo/logo.png" alt="Logo" class="site-logo site-logo--sm" />
             Panel Admina
           </div>
         </div>
