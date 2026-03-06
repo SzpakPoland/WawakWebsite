@@ -58,16 +58,37 @@ const Auth = (() => {
     const navAdminLink = document.getElementById('nav-admin-link');
     if (_user) {
       navAuth.innerHTML = `
-        <div class="d-flex align-center gap-2">
-          <button class="nav-profile-btn" id="btn-profile" title="Edytuj profil">
+        <div class="nav-profile-wrap">
+          <button class="nav-profile-btn" id="btn-profile-toggle" aria-haspopup="true" aria-expanded="false">
             ${renderAvatar(_user)}
             <span class="nav-profile-name">${escapeHtml(_user.display_name)}</span>
             <span class="nav-profile-caret">▾</span>
           </button>
-          <button class="btn btn-sm btn-outline" id="btn-logout">Wyloguj</button>
+          <div class="nav-dropdown" id="nav-profile-dropdown">
+            <div class="nav-dropdown-header">
+              <strong>${escapeHtml(_user.display_name)}</strong>
+              ${escapeHtml(_user.role_name || '')}
+            </div>
+            <button class="nav-dropdown-item" id="btn-profile">👤 Mój profil</button>
+            <button class="nav-dropdown-item danger" id="btn-logout">🚪 Wyloguj</button>
+          </div>
         </div>`;
-      document.getElementById('btn-profile').addEventListener('click', openProfileModal);
+
+      const toggle = document.getElementById('btn-profile-toggle');
+      const dropdown = document.getElementById('nav-profile-dropdown');
+
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = dropdown.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', isOpen);
+      });
+
+      document.getElementById('btn-profile').addEventListener('click', () => {
+        dropdown.classList.remove('open');
+        openProfileModal();
+      });
       document.getElementById('btn-logout').addEventListener('click', async () => {
+        dropdown.classList.remove('open');
         await logout();
         showToast('Wylogowano pomyślnie', 'info');
         Router.navigate('/');

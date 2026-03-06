@@ -3,7 +3,7 @@ async function renderSuggestions(container) {
     <div class="page-header">
       <div class="container">
         <h1>Skrzynka Sugestii</h1>
-        <p>Masz pomysł, pytanie lub chcesz nam coś powiedzieć? Wszystkie wiadomości są w pełni anonimowe.</p>
+        <p>Masz pomysł lub chcesz nam coś powiedzieć? Wszystkie wiadomości są w pełni anonimowe.</p>
       </div>
     </div>
     <div class="section">

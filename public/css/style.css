@@ -421,7 +421,7 @@ select.form-control { appearance: none; background-image: url("data:image/svg+xm
 .stat-label { font-size: 0.82rem; color: var(--text-muted); font-weight: 500; margin-top: 4px; }
 
 /* ==================== TABLE ==================== */
-.table-wrap { background: var(--bg2); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.table-wrap { background: var(--bg2); border-radius: var(--radius); box-shadow: var(--shadow); overflow-x: auto; -webkit-overflow-scrolling: touch; }
 table { width: 100%; border-collapse: collapse; }
 thead th {
   text-align: left; padding: 14px 20px;
@@ -597,6 +597,27 @@ tbody tr:hover { background: #f8fafc; }
 .nav-profile-btn:hover { background: var(--primary-light); }
 .nav-profile-name { font-weight: 600; font-size: 0.9rem; color: var(--text); }
 .nav-profile-caret { font-size: 0.7rem; color: var(--text-muted); }
+.nav-profile-wrap { position: relative; }
+.nav-dropdown {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  min-width: 200px; z-index: 1100; display: none;
+}
+.nav-dropdown.open { display: block; }
+.nav-dropdown-header {
+  padding: 14px 16px 10px; border-bottom: 1px solid var(--border);
+  font-size: 0.82rem; color: var(--text-muted);
+}
+.nav-dropdown-header strong { display: block; font-size: 0.95rem; color: var(--text); font-weight: 700; }
+.nav-dropdown-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 16px; font-size: 0.9rem; color: var(--text);
+  background: none; border: none; width: 100%; text-align: left;
+  cursor: pointer; font-family: inherit; transition: background var(--transition);
+}
+.nav-dropdown-item:hover { background: var(--primary-light); color: var(--primary); }
+.nav-dropdown-item.danger:hover { background: #fef2f2; color: #dc2626; }
 
 /* ==================== PROFILE MODAL ==================== */
 .profile-avatar-area {
@@ -682,20 +703,39 @@ tbody tr:hover { background: #f8fafc; }
   .ann-detail-split--right img { order: 0; }
 }
 
-/* ==================== RESPONSIVE ==================== */
+/* ==================== RESPONSIVE ====================*/
+.admin-mobile-bar { display: none; }
 @media (max-width: 900px) {
   .hero-inner { grid-template-columns: 1fr; text-align: center; }
   .hero-btns { justify-content: center; }
   .hero-visual { display: none; }
   .admin-layout { flex-direction: column; }
   .admin-sidebar {
-    width: 100%; height: auto; position: static;
-    flex-direction: row; overflow-x: auto; padding: 8px 0;
+    position: fixed; top: 0; left: -280px; width: 270px;
+    height: 100vh; z-index: 1200; padding: 24px 0;
+    flex-direction: column; overflow-y: auto; overflow-x: hidden;
+    transition: left 0.28s cubic-bezier(0.4,0,0.2,1);
     flex-wrap: nowrap;
   }
-  .admin-sidebar-logo, .sidebar-section-title { display: none; }
-  .sidebar-nav-item { padding: 10px 16px; flex-direction: column; gap: 4px; font-size: 0.75rem; border-right: none !important; }
-  .sidebar-nav-item .nav-icon { font-size: 1.3rem; }
+  .admin-sidebar.open { left: 0; }
+  .admin-sidebar-logo { display: flex; }
+  .sidebar-section-title { display: block; }
+  .sidebar-nav-item { padding: 12px 24px; flex-direction: row; gap: 12px; font-size: 0.9rem; }
+  .sidebar-nav-item .nav-icon { font-size: 1.2rem; }
+  .admin-sidebar-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); z-index: 1199;
+  }
+  .admin-sidebar-backdrop.open { display: block; }
+  .admin-mobile-bar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 20px; background: #1e3a8a; color: #fff;
+    font-weight: 700; font-size: 1rem;
+  }
+  .admin-mobile-bar button {
+    background: none; border: none; color: #fff; cursor: pointer;
+    font-size: 1.5rem; line-height: 1; padding: 4px 8px;
+  }
   .admin-main { padding: 20px 16px; }
   .form-row { grid-template-columns: 1fr; }
   .announcement-grid { grid-template-columns: 1fr; }
@@ -705,8 +745,21 @@ tbody tr:hover { background: #f8fafc; }
   .nav-links { display: none; flex-direction: column; position: absolute; top: var(--navbar-h); left: 0; right: 0; background: white; padding: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); z-index: 999; }
   .nav-links.open { display: flex; }
   .navbar { position: sticky; }
+  .nav-profile-name { display: none; }
+  .nav-profile-caret { display: none; }
   .gallery-grid { grid-template-columns: repeat(2, 1fr); }
   .stats-grid { grid-template-columns: 1fr 1fr; }
+  .admin-main { padding: 14px 12px; }
+  .admin-page-title { margin-bottom: 16px; padding-bottom: 12px; }
+  .admin-page-title h2 { font-size: 1.2rem; }
+  thead th { padding: 10px 12px; }
+  tbody td { padding: 10px 12px; font-size: 0.82rem; }
+  .stat-card { padding: 14px 16px; gap: 10px; }
+  .stat-icon { width: 40px; height: 40px; font-size: 1.1rem; }
+  .stat-number { font-size: 1.5rem; }
+  .filters-bar { gap: 8px; }
+  .perm-item { flex-wrap: wrap; align-items: flex-start; }
+  .toggle-switch { margin-left: 0; }
 }
 @media (max-width: 400px) {
   .gallery-grid { grid-template-columns: 1fr; }

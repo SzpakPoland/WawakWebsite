@@ -95,14 +95,23 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeModal();
 });
 
-// Hamburger
+// Hamburger (public nav)
 document.getElementById('hamburger').addEventListener('click', () => {
   document.getElementById('nav-links').classList.toggle('open');
 });
+
+// Global click — close public nav + close profile dropdown
 document.addEventListener('click', (e) => {
   const nav = document.getElementById('nav-links');
   const ham = document.getElementById('hamburger');
-  if (!nav.contains(e.target) && !ham.contains(e.target)) nav.classList.remove('open');
+  if (nav && ham && !nav.contains(e.target) && !ham.contains(e.target)) nav.classList.remove('open');
+
+  const dropdown = document.getElementById('nav-profile-dropdown');
+  const toggle   = document.getElementById('btn-profile-toggle');
+  if (dropdown && toggle && !dropdown.contains(e.target) && !toggle.contains(e.target)) {
+    dropdown.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+  }
 });
 
 // Boot

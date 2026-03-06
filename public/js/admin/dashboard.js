@@ -24,6 +24,11 @@ function renderAdminPanel(container, section = 'dashboard') {
 
   container.innerHTML = `
     <div class="admin-layout">
+      <div class="admin-mobile-bar" id="admin-mobile-bar">
+        <button id="admin-sidebar-toggle" aria-label="Menu">☰</button>
+        <span>Panel Admina</span>
+      </div>
+      <div class="admin-sidebar-backdrop" id="admin-sidebar-backdrop"></div>
       <nav class="admin-sidebar" id="admin-sidebar">
         <div class="admin-sidebar-logo">
           <div class="logo" style="display:flex;align-items:center;gap:10px">
@@ -45,8 +50,23 @@ function renderAdminPanel(container, section = 'dashboard') {
       <div class="admin-main" id="admin-section-content"></div>
     </div>`;
 
+  function openSidebar() {
+    document.getElementById('admin-sidebar').classList.add('open');
+    document.getElementById('admin-sidebar-backdrop').classList.add('open');
+  }
+  function closeSidebar() {
+    document.getElementById('admin-sidebar').classList.remove('open');
+    document.getElementById('admin-sidebar-backdrop').classList.remove('open');
+  }
+
+  const toggleBtn = document.getElementById('admin-sidebar-toggle');
+  const backdrop = document.getElementById('admin-sidebar-backdrop');
+  if (toggleBtn) toggleBtn.addEventListener('click', openSidebar);
+  if (backdrop) backdrop.addEventListener('click', closeSidebar);
+
   document.querySelectorAll('.sidebar-nav-item').forEach(btn => {
     btn.addEventListener('click', () => {
+      closeSidebar();
       Router.navigate(`/admin/${btn.dataset.section}`);
     });
   });

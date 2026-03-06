@@ -3,7 +3,7 @@ async function renderStaff(container) {
     <div class="page-header">
       <div class="container" style="position:relative">
         <h1>👥 Sztab</h1>
-        <p>Poznaj ludzi stojących za kampanią Wawaki</p>
+        <p>Poznaj ludzi stojących za kampanią Wawaka</p>
       </div>
     </div>
     <section class="section">
