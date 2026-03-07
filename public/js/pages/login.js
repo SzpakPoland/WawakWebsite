@@ -4,7 +4,7 @@ function renderLogin(container) {
     <div class="login-page">
       <div class="login-card">
         <div class="login-logo">
-          <img src="/images/logo/logo.svg" alt="Logo" class="site-logo site-logo--lg" style="margin-bottom:8px" />
+          <img src="/images/logo/logo.png" alt="Logo" class="site-logo site-logo--lg" style="margin-bottom:8px" />
           <h2>Sztab Wawaka</h2>
           <p>Zaloguj się do panelu</p>
         </div>
