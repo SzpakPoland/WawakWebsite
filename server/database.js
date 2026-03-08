@@ -105,34 +105,13 @@ function seedData() {
   const insertPerm = _db.prepare('INSERT OR IGNORE INTO permissions (name, description, category) VALUES (?, ?, ?)');
   for (const p of permsData) insertPerm.run(...p);
 
-  const rolesData = [
-    ['superadmin','Pełne uprawnienia administracyjne'],
-    ['admin','Administrator z szerokimi uprawnieniami'],
-    ['redaktor','Może tworzyć i edytować treści'],
-    ['moderator','Może moderować treści'],
-  ];
-  const insertRole = _db.prepare('INSERT OR IGNORE INTO roles (name, description) VALUES (?, ?)');
-  for (const r of rolesData) insertRole.run(...r);
+  _db.prepare('INSERT OR IGNORE INTO roles (name, description) VALUES (?, ?)').run('superadmin', 'Pełne uprawnienia administracyjne');
 
   const superadminRole = _db.prepare("SELECT id FROM roles WHERE name = 'superadmin'").get();
   const allPerms = _db.prepare('SELECT id FROM permissions').all();
   if (superadminRole) {
     const ins = _db.prepare('INSERT OR IGNORE INTO role_permissions (role_id, permission_id) VALUES (?, ?)');
     for (const p of allPerms) ins.run(superadminRole.id, p.id);
-  }
-
-  const adminRole = _db.prepare("SELECT id FROM roles WHERE name = 'admin'").get();
-  if (adminRole) {
-    const adminPerms = _db.prepare("SELECT id FROM permissions WHERE name != 'manage_permissions'").all();
-    const ins = _db.prepare('INSERT OR IGNORE INTO role_permissions (role_id, permission_id) VALUES (?, ?)');
-    for (const p of adminPerms) ins.run(adminRole.id, p.id);
-  }
-
-  const redaktorRole = _db.prepare("SELECT id FROM roles WHERE name = 'redaktor'").get();
-  if (redaktorRole) {
-    const rPerms = _db.prepare("SELECT id FROM permissions WHERE category IN ('announcements', 'gallery')").all();
-    const ins = _db.prepare('INSERT OR IGNORE INTO role_permissions (role_id, permission_id) VALUES (?, ?)');
-    for (const p of rPerms) ins.run(redaktorRole.id, p.id);
   }
 
   const existingAdmin = _db.prepare("SELECT id FROM users WHERE username = 'superadmin'").get();
