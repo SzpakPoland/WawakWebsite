@@ -20,6 +20,18 @@ const Auth = (() => {
     return _user && (_user.role_name === 'superadmin' || _user.role_name === 'admin');
   }
 
+  const ADMIN_PERMISSIONS = [
+    'edit_announcements','create_announcements','delete_announcements',
+    'manage_gallery','manage_staff','view_suggestions','manage_suggestions',
+    'manage_users','manage_roles','manage_permissions','view_logs'
+  ];
+
+  function hasAnyAdminPermission() {
+    if (!_user) return false;
+    if (_user.role_name === 'superadmin') return true;
+    return ADMIN_PERMISSIONS.some(p => _permissions.includes(p));
+  }
+
   async function init() {
     const token = localStorage.getItem('sw_token');
     if (!token) { _user = null; _permissions = []; updateNavbar(); return false; }
@@ -93,7 +105,7 @@ const Auth = (() => {
         showToast('Wylogowano pomyślnie', 'info');
         Router.navigate('/');
       });
-      if (navAdminLink && isAdmin()) navAdminLink.classList.remove('hidden');
+      if (navAdminLink && hasAnyAdminPermission()) navAdminLink.classList.remove('hidden');
       else if (navAdminLink) navAdminLink.classList.add('hidden');
     } else {
       navAuth.innerHTML = `<button class="btn btn-outline" id="btn-login">Zaloguj</button>`;
@@ -214,5 +226,5 @@ const Auth = (() => {
     });
   }
 
-  return { getUser, getPermissions, isLoggedIn, hasPermission, isSuperadmin, isAdmin, init, login, logout, updateNavbar, openProfileModal };
+  return { getUser, getPermissions, isLoggedIn, hasPermission, isSuperadmin, isAdmin, hasAnyAdminPermission, init, login, logout, updateNavbar, openProfileModal };
 })();
