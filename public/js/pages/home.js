@@ -7,7 +7,7 @@ async function renderHome(container) {
           <div class="hero-content anim-fade-left">
             <div class="hero-badge">🗳️ Kampania Wyborcza 2026</div>
             <h1>Głosuj na<br/><span class="highlight">Wawaka!</span></h1>
-            <p>Razem zmieniamy naszą szkołę na lepsze. Więcej głosu dla uczniów, lepsza przestrzeń, ciekawsze eventy.</p>
+            <p>Razem zmieniamy naszą szkołę na lepsze.</p>
             <div class="hero-btns">
               <a href="/announcements" class="btn btn-lg btn-white">📢 Ogłoszenia</a>
               <a href="/staff" class="btn btn-lg btn-ghost-white">👥 Poznaj Sztab</a>
