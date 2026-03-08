@@ -348,7 +348,7 @@ select.form-control { appearance: none; background-image: url("data:image/svg+xm
 .page-header p { color: rgba(255,255,255,0.75); font-size: 1.05rem; }
 .page-header::before {
   content: ''; position: absolute; inset: 0;
-  background: url('../images/logo/baner.png') center center / cover no-repeat;
+  background: url('../images/logo/BANER.png') center center / cover no-repeat;
   opacity: 0.18;
 }
 
