@@ -132,15 +132,7 @@ function seedData() {
     .forEach(([n,r,s]) => ins.run(n,r,s));
   }
 
-  const annCount = _db.prepare('SELECT COUNT(*) as cnt FROM announcements').get();
-  if (!annCount || annCount.cnt === 0) {
-    const adminUser = _db.prepare("SELECT id FROM users WHERE username = 'superadmin'").get();
-    const ins = _db.prepare('INSERT INTO announcements (title, content, author_id, color) VALUES (?, ?, ?, ?)');
-    [['Witamy na stronie Sztabu Wawaka!','Oficjalny start kampanii wyborczej. Razem zmieńmy naszą szkołę na lepsze!','#1D4ED8'],
-     ['Program wyborczy','Przygotowaliśmy ambitny program reform.','#DC2626'],
-     ['Spotkanie informacyjne','Zapraszamy na spotkanie w przyszłym tygodniu!','#16a34a']]
-    .forEach(([t,c,col]) => ins.run(t,c,adminUser ? adminUser.id : null,col));
-  }
+
 }
 
 module.exports = { getDb, initializeDatabase };
