@@ -96,7 +96,7 @@ async function renderHome(container) {
     if (!staff.length) {
       staffContainer.innerHTML = `<div class="empty-state"><span class="emoji">👥</span><h3>Brak członków sztabu</h3></div>`;
     } else {
-      staffContainer.innerHTML = `<div class="staff-grid">${staff.slice(0,4).map(renderStaffCard).join('')}</div>`;
+      staffContainer.innerHTML = `<div class="staff-grid">${staff.slice(0,3).map(renderStaffCard).join('')}</div>`;
     }
   } catch (e) {
     document.getElementById('home-staff').innerHTML = `<p style="color:#ef4444">Błąd ładowania sztabu</p>`;
