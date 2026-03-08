@@ -39,6 +39,7 @@ async function startServer() {
   app.use('/api/staff', require('./routes/staff'));
   app.use('/api/logs', require('./routes/logs'));
   app.use('/api/suggestions', require('./routes/suggestions'));
+  app.use('/api/discounts', require('./routes/discounts'));
 
   app.use((err, req, res, next) => {
     console.error(err.stack);
@@ -46,9 +47,10 @@ async function startServer() {
   });
 
   app.get('*', (req, res) => {
-    if (!req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
-      res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+      return res.status(404).json({ error: 'Nie znaleziono zasobu' });
     }
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
   });
 
   app.listen(PORT, () => {

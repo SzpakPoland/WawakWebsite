@@ -4,7 +4,7 @@ async function renderHome(container) {
     <section class="hero">
       <div class="container">
         <div class="hero-inner">
-          <div class="hero-content">
+          <div class="hero-content anim-fade-left">
             <div class="hero-badge">🗳️ Kampania Wyborcza 2026</div>
             <h1>Głosuj na<br/><span class="highlight">Wawaka!</span></h1>
             <p>Razem zmieniamy naszą szkołę na lepsze. Więcej głosu dla uczniów, lepsza przestrzeń, ciekawsze eventy.</p>
@@ -13,7 +13,7 @@ async function renderHome(container) {
               <a href="/staff" class="btn btn-lg btn-ghost-white">👥 Poznaj Sztab</a>
             </div>
           </div>
-          <div class="hero-visual">
+          <div class="hero-visual anim-fade-right">
             <div class="hero-card-float">
               <img src="/images/logo/logo.png" alt="Logo" class="site-logo site-logo--xl" style="margin-bottom:16px" />
               <h3>Sztab Wawaka</h3>
@@ -28,16 +28,18 @@ async function renderHome(container) {
     <section class="section-sm" style="background:white;">
       <div class="container">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px;text-align:center;">
-          ${['🎯 Cel i Programy','🤝 Zaufanie','🔊 Komunikacja','🌟 Energia'].map((item,i)=>{
-            const parts = item.split(' ');
-            const emoji = parts[0];
-            const label = parts.slice(1).join(' ');
-            const descs = ['Konkretne plany na zmiany w szkole','Transparentność i uczciwość wobec uczniów','Otwarta komunikacja ze społecznością','Pasja i zaangażowanie na każdym kroku'];
+          ${[
+            {emoji:'⚡', label:'Zadania i działanie', desc:'Konkretne kroki, realne zmiany w szkole każdego dnia'},
+            {emoji:'🤝', label:'Współpraca',          desc:'Razem z uczniami, nauczycielami i dyrekcją'},
+            {emoji:'💬', label:'Rozmowa',             desc:'Słuchamy, rozmawiamy, reagujemy na Twoje potrzeby'},
+            {emoji:'🏆', label:'Wyzwania',            desc:'Odważnie podejmujemy nowe inicjatywy i projekty'},
+          ].map((item, i) => {
             const colors = ['var(--primary-light)','var(--secondary-light)','var(--accent-light)','var(--yellow-light)'];
-            return `<div style="padding:28px 20px;border-radius:var(--radius);background:${colors[i]};">
-              <span style="font-size:2.5rem">${emoji}</span>
-              <h3 style="margin:12px 0 8px;color:var(--text)">${label}</h3>
-              <p style="font-size:0.88rem">${descs[i]}</p>
+            const delay = i * 0.12;
+            return `<div class="reveal" style="padding:28px 20px;border-radius:var(--radius);background:${colors[i]};transition-delay:${delay}s;">
+              <span style="font-size:2.5rem">${item.emoji}</span>
+              <h3 style="margin:12px 0 8px;color:var(--text)">${item.label}</h3>
+              <p style="font-size:0.88rem">${item.desc}</p>
             </div>`;
           }).join('')}
         </div>
@@ -47,14 +49,14 @@ async function renderHome(container) {
     <!-- LATEST ANNOUNCEMENTS -->
     <section class="section">
       <div class="container">
-        <div class="section-title-row">
+        <div class="section-title-row reveal">
           <div>
             <h2>Najnowsze ogłoszenia</h2>
             <p>Bądź na bieżąco z aktualnościami kampanii</p>
           </div>
           <a href="/announcements" class="btn btn-outline">Wszystkie ogłoszenia →</a>
         </div>
-        <div id="home-announcements">
+        <div id="home-announcements" class="reveal" style="transition-delay:0.1s">
           <div class="empty-state"><div class="spinner" style="margin:0 auto"></div></div>
         </div>
       </div>
@@ -63,21 +65,20 @@ async function renderHome(container) {
     <!-- STAFF PREVIEW -->
     <section class="section-sm" style="background:white;">
       <div class="container">
-        <div class="section-title-row">
+        <div class="section-title-row reveal">
           <div>
             <h2>Nasz Sztab</h2>
             <p>Poznaj ludzi, którzy stoją za kampanią</p>
           </div>
           <a href="/staff" class="btn btn-outline">Cały zespół →</a>
         </div>
-        <div id="home-staff">
+        <div id="home-staff" class="reveal" style="transition-delay:0.1s">
           <div class="empty-state"><div class="spinner" style="margin:0 auto"></div></div>
         </div>
       </div>
     </section>
   `;
 
-  // Load data
   try {
     const announcements = await API.getAnnouncements();
     const annContainer = document.getElementById('home-announcements');

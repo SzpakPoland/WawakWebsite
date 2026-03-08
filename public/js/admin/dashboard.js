@@ -5,6 +5,7 @@ function getAdminSidebarItems() {
     { id: 'gallery',      icon: '🖼️', label: 'Galeria',          perm: 'manage_gallery' },
     { id: 'staff',        icon: '👥', label: 'Sztab',            perm: 'manage_staff' },
     { id: 'suggestions',  icon: '📨', label: 'Sugestie',         perm: 'view_suggestions' },
+    { id: 'discounts',    icon: '🏷️', label: 'Zniżki',           perm: 'manage_discounts' },
     { id: 'users',        icon: '👤', label: 'Użytkownicy',      perm: 'manage_users' },
     { id: 'permissions',  icon: '🔐', label: 'Uprawnienia',      perm: 'manage_permissions' },
     { id: 'logs',         icon: '📋', label: 'Logi systemowe',   perm: 'view_logs' },
@@ -89,6 +90,7 @@ function loadAdminSection(section) {
     case 'gallery':      renderAdminGallery(content); break;
     case 'staff':        renderAdminStaff(content); break;
     case 'suggestions':  renderAdminSuggestions(content); break;
+    case 'discounts':    renderAdminDiscounts(content); break;
     case 'users':        renderAdminUsers(content); break;
     case 'permissions':  renderAdminPermissions(content); break;
     case 'logs':         renderAdminLogs(content); break;

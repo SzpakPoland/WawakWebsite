@@ -23,7 +23,7 @@ const Auth = (() => {
   const ADMIN_PERMISSIONS = [
     'edit_announcements','create_announcements','delete_announcements',
     'manage_gallery','manage_staff','view_suggestions','manage_suggestions',
-    'manage_users','manage_roles','manage_permissions','view_logs'
+    'manage_users','manage_roles','manage_permissions','view_logs','manage_discounts'
   ];
 
   function hasAnyAdminPermission() {

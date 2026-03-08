@@ -73,6 +73,13 @@ const API = {
   getSuggestions: (params = {}) => { const q = new URLSearchParams(params).toString(); return apiFetch(`/suggestions${q ? '?' + q : ''}`); },
   updateSuggestion: (id, data) => apiFetch(`/suggestions/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteSuggestion: (id) => apiFetch(`/suggestions/${id}`, { method: 'DELETE' }),
+
+  // Discounts
+  getDiscounts: () => apiFetch('/discounts'),
+  getAllDiscounts: () => apiFetch('/discounts/all'),
+  uploadDiscount: (formData) => apiFetch('/discounts', { method: 'POST', body: formData, headers: {} }),
+  updateDiscount: (id, data) => apiFetch(`/discounts/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteDiscount: (id) => apiFetch(`/discounts/${id}`, { method: 'DELETE' }),
 };
 
 // Global toast helper

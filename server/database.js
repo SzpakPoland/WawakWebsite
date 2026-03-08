@@ -76,6 +76,12 @@ function createTables() {
       admin_note TEXT, created_at DATETIME DEFAULT (datetime('now')),
       updated_at DATETIME DEFAULT (datetime('now'))
     );
+    CREATE TABLE IF NOT EXISTS discounts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL,
+      description TEXT, image_url TEXT NOT NULL,
+      is_active INTEGER DEFAULT 1, sort_order INTEGER DEFAULT 0,
+      created_by INTEGER, created_at DATETIME DEFAULT (datetime('now'))
+    );
   `);
   const migrations = [
     'ALTER TABLE announcements ADD COLUMN excerpt TEXT',
@@ -101,6 +107,7 @@ function seedData() {
     ['manage_staff','Zarządzanie plakietkami sztabu','staff'],
     ['view_suggestions','Przeglądanie skrzynki sugestii','suggestions'],
     ['manage_suggestions','Zarządzanie sugestiami','suggestions'],
+    ['manage_discounts','Zarządzanie zniżkami','discounts'],
   ];
   const insertPerm = _db.prepare('INSERT OR IGNORE INTO permissions (name, description, category) VALUES (?, ?, ?)');
   for (const p of permsData) insertPerm.run(...p);

@@ -6,6 +6,7 @@ const Router = (() => {
     '/gallery':       (c) => renderGallery(c),
     '/staff':         (c) => renderStaff(c),
     '/suggestions':   (c) => renderSuggestions(c),
+    '/discounts':     (c) => renderDiscounts(c),
     '/login':         (c) => renderLogin(c),
     '/admin':         (c, params) => renderAdminPanel(c, params[0] || 'dashboard'),
   };
@@ -119,3 +120,46 @@ document.addEventListener('click', (e) => {
   await Auth.init();
   Router.init();
 })();
+
+// Liquid glass navbar — scroll effect
+(function () {
+  const navbar = document.querySelector('.navbar');
+  if (!navbar) return;
+  const onScroll = () => {
+    const y = window.scrollY;
+    if (y > 10) {
+      navbar.style.background = 'rgba(255,255,255,0.68)';
+      navbar.style.boxShadow = '0 4px 32px rgba(29,78,216,0.14), inset 0 1px 0 rgba(255,255,255,0.8)';
+    } else {
+      navbar.style.background = 'rgba(255,255,255,0.55)';
+      navbar.style.boxShadow = '0 2px 24px rgba(29,78,216,0.10), inset 0 1px 0 rgba(255,255,255,0.7)';
+    }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+}());
+
+// Scroll-reveal Intersection Observer
+(function () {
+  const selectors = '.reveal, .reveal-left, .reveal-right, .reveal-scale';
+  const observe = () => {
+    document.querySelectorAll(selectors).forEach(el => {
+      if (!el._revealObserved) {
+        revealObs.observe(el);
+        el._revealObserved = true;
+      }
+    });
+  };
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        revealObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+
+  observe();
+  const mo = new MutationObserver(observe);
+  mo.observe(document.getElementById('app') || document.body, { childList: true, subtree: true });
+}());
