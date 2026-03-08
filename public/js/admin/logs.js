@@ -1,4 +1,5 @@
 let _logsPage = 0;
+let _canViewIp = false;
 const LOGS_PER_PAGE = 25;
 
 async function renderAdminLogs(container) {
@@ -43,6 +44,7 @@ async function loadLogs() {
   try {
     const data = await API.getLogs({ limit: LOGS_PER_PAGE, offset: _logsPage * LOGS_PER_PAGE, ...(category ? { category } : {}) });
     const logs = data.logs || [];
+    _canViewIp = !!data.canViewIp;
 
     if (!logs.length) {
       wrap.innerHTML = `<div class="empty-state"><span class="emoji">📋</span><h3>Brak logów</h3></div>`;
@@ -60,6 +62,7 @@ async function loadLogs() {
               <th>Akcja</th>
               <th>Użytkownik</th>
               <th>Szczegóły</th>
+              ${_canViewIp ? '<th>Adres IP</th>' : ''}
               <th>Data i godzina</th>
             </tr>
           </thead>
@@ -75,6 +78,7 @@ async function loadLogs() {
                   <div style="font-weight:600;font-size:0.88rem">${escapeHtml(l.username || '—')}</div>
                 </td>
                 <td class="log-details">${escapeHtml(detailsStr).substring(0, 80)}</td>
+                ${_canViewIp ? `<td style="font-size:0.8rem;font-family:monospace;white-space:nowrap">${escapeHtml(l.ip_address || '—')}</td>` : ''}
                 <td style="font-size:0.82rem;white-space:nowrap">${formatDateTime(l.created_at)}</td>
               </tr>`;
             }).join('')}

@@ -93,6 +93,7 @@ function seedData() {
     ['manage_roles','Zarządzanie rolami','users'],
     ['manage_permissions','Zarządzanie uprawnieniami','users'],
     ['view_logs','Wgląd w logi systemowe','system'],
+    ['view_logs_ip','Widoczność adresów IP w logach','system'],
     ['create_announcements','Tworzenie ogłoszeń','announcements'],
     ['edit_announcements','Edycja ogłoszeń','announcements'],
     ['delete_announcements','Usuwanie ogłoszeń','announcements'],

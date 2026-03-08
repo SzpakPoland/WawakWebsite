@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { getDb } = require('../database');
+const { appendIpLog } = require('../ipLogs');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'sztab-wawaka-secret-key-2026-change-in-production';
 
@@ -63,9 +64,41 @@ function logAction(userId, username, action, category, details, ip) {
     const db = getDb();
     db.prepare(`INSERT INTO system_logs (user_id, username, action, category, details, ip_address) VALUES (?, ?, ?, ?, ?, ?)`)
       .run(userId || null, username || 'System', action, category || 'general', details ? JSON.stringify(details) : null, ip || null);
+    if (ip) {
+      appendIpLog({
+        timestamp: new Date().toISOString(),
+        userId: userId || null,
+        username: username || 'System',
+        action,
+        category: category || 'general',
+        ip
+      });
+    }
   } catch (e) {
     console.error('Log error:', e.message);
   }
 }
 
-module.exports = { generateToken, authenticateToken, optionalAuth, requirePermission, logAction, JWT_SECRET };
+function userHasPermission(user, permissionName) {
+  try {
+    const db = getDb();
+    const roleRow = db.prepare(`SELECT name FROM roles WHERE id = ?`).get(user.role_id);
+    if (roleRow && roleRow.name === 'superadmin') return true;
+    const rolePerm = db.prepare(`
+      SELECT rp.permission_id FROM role_permissions rp
+      JOIN permissions p ON p.id = rp.permission_id
+      WHERE rp.role_id = ? AND p.name = ?
+    `).get(user.role_id, permissionName);
+    if (rolePerm) return true;
+    const userPerm = db.prepare(`
+      SELECT up.granted FROM user_permissions up
+      JOIN permissions p ON p.id = up.permission_id
+      WHERE up.user_id = ? AND p.name = ? AND up.granted = 1
+    `).get(user.id, permissionName);
+    return !!userPerm;
+  } catch {
+    return false;
+  }
+}
+
+module.exports = { generateToken, authenticateToken, optionalAuth, requirePermission, userHasPermission, logAction, JWT_SECRET };
