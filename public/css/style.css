@@ -121,21 +121,31 @@ p { color: var(--text-muted); }
 
 .navbar {
   position: sticky; top: 0; z-index: 1000;
-  background: rgba(255,255,255,0.55);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background: transparent;
   border-bottom: 1px solid rgba(255,255,255,0.35);
   height: var(--navbar-h);
   box-shadow: 0 2px 24px rgba(29,78,216,0.10), inset 0 1px 0 rgba(255,255,255,0.7);
   transition: background 0.4s ease, box-shadow 0.4s ease;
-  will-change: backdrop-filter;
 }
+.navbar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  transition: background 0.4s ease;
+  z-index: -1;
+}
+.navbar.scrolled { box-shadow: 0 4px 32px rgba(29,78,216,0.14), inset 0 1px 0 rgba(255,255,255,0.8); }
+.navbar.scrolled::before { background: rgba(255,255,255,0.68); }
 .navbar::after {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.05) 50%, rgba(29,78,216,0.04) 100%);
   pointer-events: none;
+  z-index: -1;
 }
 .nav-inner {
   max-width: 1200px; margin: 0 auto; padding: 0 24px;

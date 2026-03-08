@@ -126,13 +126,10 @@ document.addEventListener('click', (e) => {
   const navbar = document.querySelector('.navbar');
   if (!navbar) return;
   const onScroll = () => {
-    const y = window.scrollY;
-    if (y > 10) {
-      navbar.style.background = 'rgba(255,255,255,0.68)';
-      navbar.style.boxShadow = '0 4px 32px rgba(29,78,216,0.14), inset 0 1px 0 rgba(255,255,255,0.8)';
+    if (window.scrollY > 10) {
+      navbar.classList.add('scrolled');
     } else {
-      navbar.style.background = 'rgba(255,255,255,0.55)';
-      navbar.style.boxShadow = '0 2px 24px rgba(29,78,216,0.10), inset 0 1px 0 rgba(255,255,255,0.7)';
+      navbar.classList.remove('scrolled');
     }
   };
   window.addEventListener('scroll', onScroll, { passive: true });
