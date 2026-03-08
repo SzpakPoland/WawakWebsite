@@ -103,9 +103,10 @@ function showAnnouncementModal(ann) {
         </div>
         <input type="hidden" id="ann-image" value="${isEdit && ann.image_url ? escapeHtml(ann.image_url) : ''}" />
         <div style="display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap">
-          <label class="btn btn-sm btn-outline" style="margin:0;cursor:pointer">
+          <label class="btn btn-sm btn-outline" style="margin:0;cursor:pointer" for="ann-image-file">
             📤 Wgraj plik
           </label>
+          <input type="file" id="ann-image-file" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none" />
           <span style="color:var(--text-muted);font-size:0.82rem">lub</span>
           <input type="text" id="ann-image-url" class="form-control" style="flex:1;min-width:180px" value="${isEdit && ann.image_url && !ann.image_url.startsWith('/uploads/') ? escapeHtml(ann.image_url) : ''}" placeholder="Wklej URL obrazka..." />
         </div>

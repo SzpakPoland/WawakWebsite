@@ -9,6 +9,10 @@ data/*.db
 data/*.db-shm
 data/*.db-wal
 
+# Pliki runtime (generowane przez serwer)
+data/ip-logs.json
+data/upload-limits.json
+
 # Przesłane pliki (zarządzane osobno na serwerze)
 public/uploads/avatars/*
 public/uploads/announcements/*
