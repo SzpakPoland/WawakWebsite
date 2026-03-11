@@ -70,6 +70,9 @@ const Auth = (() => {
     const navAdminLink = document.getElementById('nav-admin-link');
     if (_user) {
       navAuth.innerHTML = `
+        <a href="https://www.instagram.com/sztabwawaka/" class="nav-ig-btn" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
         <div class="nav-profile-wrap">
           <button class="nav-profile-btn" id="btn-profile-toggle" aria-haspopup="true" aria-expanded="false">
             ${renderAvatar(_user)}
@@ -108,7 +111,11 @@ const Auth = (() => {
       if (navAdminLink && hasAnyAdminPermission()) navAdminLink.classList.remove('hidden');
       else if (navAdminLink) navAdminLink.classList.add('hidden');
     } else {
-      navAuth.innerHTML = `<button class="btn btn-outline" id="btn-login">Zaloguj</button>`;
+      navAuth.innerHTML = `
+        <a href="https://www.instagram.com/sztabwawaka/" class="nav-ig-btn" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <button class="btn btn-outline" id="btn-login">Zaloguj</button>`;
       document.getElementById('btn-login').addEventListener('click', () => Router.navigate('/login'));
       if (navAdminLink) navAdminLink.classList.add('hidden');
     }

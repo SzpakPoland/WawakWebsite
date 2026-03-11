@@ -22,5 +22,13 @@
     "action": "Usunięto plakat zniżki",
     "category": "discounts",
     "ip": "::1"
+  },
+  {
+    "timestamp": "2026-03-11T23:36:25.460Z",
+    "userId": null,
+    "username": "MikolajH",
+    "action": "Nieudane logowanie",
+    "category": "auth",
+    "ip": "::1"
   }
 ]
